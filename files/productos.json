@@ -1,0 +1,111 @@
+[
+    {
+        "id": 1,
+        "title": "Producto 1",
+        "description": "Descripcion del producto 1",
+        "code": "abc123",
+        "price": 500,
+        "status": true,
+        "stock": 20,
+        "category": "A",
+        "thumbnail": "sin imagen"
+    },
+    {
+        "id": 2,
+        "title": "Producto 2",
+        "description": "Descripcion del producto 2",
+        "code": "abc123",
+        "price": 500,
+        "status": true,
+        "stock": 20,
+        "category": "A",
+        "thumbnail": "sin imagen"
+    },
+    {
+        "id": 3,
+        "title": "Producto 3",
+        "description": "Descripcion del producto 3",
+        "code": "abc123",
+        "price": 500,
+        "status": true,
+        "stock": 20,
+        "category": "A",
+        "thumbnail": "sin imagen"
+    },
+    {
+        "id": 4,
+        "title": "Producto 4",
+        "description": "Descripcion del producto 4",
+        "code": "abc123",
+        "price": 500,
+        "status": true,
+        "stock": 20,
+        "category": "A",
+        "thumbnail": "sin imagen"
+    },
+    {
+        "id": 5,
+        "title": "Producto 5",
+        "description": "Descripcion del producto 5",
+        "price": 500,
+        "status": true,
+        "stock": 20,
+        "category": "A",
+        "thumbnail": "sin imagen"
+    },
+    {
+        "id": 6,
+        "title": "Producto 6",
+        "description": "Descripcion del producto 6",
+        "code": "abc123",
+        "price": 500,
+        "status": true,
+        "stock": 20,
+        "category": "A",
+        "thumbnail": "sin imagen"
+    },
+    {
+        "id": 7,
+        "title": "Producto 7",
+        "description": "Descripcion del producto 7",
+        "code": "abc123",
+        "price": 500,
+        "status": true,
+        "stock": 20,
+        "category": "A",
+        "thumbnail": "sin imagen"
+    },
+    {
+        "id": 8,
+        "title": "Producto 8",
+        "description": "Descripcion del producto 8",
+        "code": "abc123",
+        "price": 500,
+        "status": true,
+        "stock": 20,
+        "category": "A",
+        "thumbnail": "sin imagen"
+    },
+    {
+        "id": 9,
+        "title": "Producto 9",
+        "description": "Descripcion del producto 9",
+        "code": "abc123",
+        "price": 500,
+        "status": true,
+        "stock": 20,
+        "category": "A",
+        "thumbnail": "sin imagen"
+    },
+    {
+        "id": 10,
+        "title": "Producto 10",
+        "description": "Descripcion del producto 10",
+        "code": "abc123",
+        "price": 500,
+        "status": true,
+        "stock": 20,
+        "category": "A",
+        "thumbnail": "sin imagen"
+    }
+]
