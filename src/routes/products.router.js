@@ -1,9 +1,9 @@
 import { Router } from "express";
-import productManager from "../productManager.js"
+import ProductManager from "../productManager.js"
 const router = Router();
 
 
-const prodMan = new productManager("/files/productos.json");
+const prodMan = new ProductManager("./files/productos.json");
 
 router.get('/', async (req, res) => {
     const { limit } = req.query
@@ -28,6 +28,7 @@ router.post('/', async (req, res) => {
     await prodMan.addProduct(prod)
     res.json("Producto agregado")
 })
+
 
 router.put('/:pid', async (req, res) => {
     const { pid } = req.params

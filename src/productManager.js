@@ -54,9 +54,21 @@ export default class ProductManager {
         return prod;
     }
 
-    updateProduct(id, title) {
-        const actualizar = this.path.find(prop => prop.id === id)
-        return actualizar.title = title
+    async updateProduct(id, product) { 
+        const products = await this.getProducts();
+        products.forEach((prod) => {
+            if (prod.id === id) {
+                prod.category = product.category
+                prod.title = product.title
+                prod.price = products.price
+                prod.description = product.description
+                prod.thumbnail = product.thumbnail
+                prod.code = product.code
+                prod.stock = product.stock
+            }
+        })
+        await fs.promises.writeFile(this.path, JSON.stringify(products))
+        return "Producto editado correctamente"
     }
 
     async deleteProduct(id) {
