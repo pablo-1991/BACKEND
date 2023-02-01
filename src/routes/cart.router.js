@@ -1,39 +1,42 @@
 import { Router } from "express";
 import cartManager from "../cartManager.js";
-import productManager from "../productManager.js"
 const router = Router();
 
+
 const cartMan = new cartManager("./files/cart.json");
-const prodMan = new productManager("./files/productos.json")
+
 
 router.get('/', (req, res) => {
-    let cart = cartMan.getPurchases();
+    let cart = cartMan.getCart();
     res.json(cart)
 })
-
-router.post('/:cid', (req, res) => {
-    let { cid } = req.params;
-    let cart = cartMan.addToCart(parseInt(cid))
-    res.json(cart)
-})
-
-router.post("/:cid/product/:pid"), (req, res) => {
-    try {
-        const result = prodMan.addProduct(req.params);
-        if (result.error) { res.status(500).json({ error: result.error }); }
-        else { res.json({ message: "Producto agregado al carrito" }) }
-    } catch (error) { res.status(500).json({ error: error.message }) }
-}
 
 router.get('/:cid', (req, res) => {
     let { cid } = req.params;
-    let purch = cartMan.getPurchaseById(parseInt(cid));
+    let purch = cartMan.getCartById(parseInt(cid));
     res.json(purch)
+})
+
+router.post('/', (req, res) => {
+    const cart = req.body
+    cartMan.addCart(cart)
+    res.send('Producto agregado al carrito')
+})
+
+router.post('/:cid/product/:pid', (req, res) => {
+    let { cid, pid } = req.params
+    let cart = cartMan.getCartById(parseInt(cid))
+    if (cart) {
+        res.json({ message: 'carrito encontrado', cart })
+        cartMan.addProductCart(pid, 1, cid)
+    } else {
+        res.status(400).send('carrito no existe')
+    }
 })
 
 router.delete(('/:cid'), (req, res) => {
     let { cid } = req.params;
-    let del = cartMan.deletePurchase(parseInt(cid))
+    let del = cartMan.deleteProductCart(parseInt(cid))
     res.json(del)
 })
 

@@ -29,7 +29,6 @@ router.post('/', async (req, res) => {
     res.json("Producto agregado")
 })
 
-
 router.put('/:pid', async (req, res) => {
     const { pid } = req.params
     const prod = req.body
