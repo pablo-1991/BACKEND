@@ -2,71 +2,74 @@ import fs from "fs";
 const path = "./files/cart.json"
 
 
-export default class cartManager {
-    constructor() {
+export default class CartManager {
+    constructor(path) {
+        this.path = path
         this.carts = []
     }
-    getCart() {
-        if (fs.existsSync(path)) {
-            const carts = JSON.parse(fs.readFileSync(path, "utf-8"))
-            return carts
-        }
-        else {
-            console.log("no existe carrito")
-        }
+
+    async saveFile() {
+        await fs.promises.writeFile(this.path, JSON.stringify(this.carts))
+        console.log(this.path, 'guardado con exito')
     }
 
-    addCart() {
-        const cart = {
-            id: this.#addId(),
-            product: []
-        }
-        const cartFile = this.getCart()
-        cartFile.push(cart)
-        fs.writeFileSync(path, JSON.stringify(cartFile));
-    }
-
-    addProductCart(CartNew) {
-        const { pid, quantity, cid } = CartNew
-
-        if (!pid || !quantity || !cid) {
-            console.log('Falta campo')
-        }
-        else {
-            const cart = {
-                pid,
-                quantity
+    async getCart() {
+        try {
+            if (!fs.existsSync(this.path)) {
+                console.log('Error: archivo no encontrado', this.path);
+                return false;
             }
-            const cartFile = this.getCart()
-            cartFile.push(cart)
-            fs.writeFileSync(path, JSON.stringify(cartFile));
+
+            const data = await fs.promises.readFile(this.path, 'utf-8')
+            this.carts = JSON.parse(data)
+            console.log(this.path, 'leido con exito')
+            return this.carts
+        } catch (error) {
+            console.log('Error: ', error)
         }
+
+        return false;
     }
 
-    getCartById(id) {
-        const carts = this.getCart();
-        return (carts.find(cart => cart.id === id)) || 'Error: Carrito no encontrado'
+    async addCart() {
+        await this.getCart()
+        const newCart = {
+            "id": this.carts.length,
+            "products": []
+        }
+        this.carts.push(newCart)
+        this.saveFile()
+        return newCart
     }
 
-    deleteProductCart(id) {
-        const getProds = this.getCart(id);
-        let validation = getProds.find((x) => x.id == id);
+    async getCartById(id) {
+        await this.getCart()
+        const cart = this.carts.find((cart) => cart.id === id)
+        if (!cart) {
+            console.log('el carrito ' + id + ' no se encontró')
+            return false
+        }
+        return cart
+    }
 
-        if (validation) {
-            let searchOthers = getProds.filter((x) => x.id != id);
-            fs.writeFileSync("./files/Cart.json", JSON.stringify(searchOthers));
-            return `Elemento con id: ${id} eliminado correctamente.`;
+    async addToCart(cid, pid, quantity) {
+        const cart = await this.getCartById(cid)
+        if (!cart) {
+            return false
+        }
+        const prodInCart = cart.products.find((prodInCart) => prodInCart.productId === pid)
+        if (prodInCart) {
+            prodInCart.quantity += quantity
         } else {
-            return `Elemento con id: ${id} no encontrado`;
+            cart.products.push({
+                "productId": pid,
+                "quantity": quantity
+            })
         }
+        this.saveFile()
+        console.log('Carrito actualizado con éxito');
+        return cart
     }
 
-    #addId() {
-        let id = 1
-        const carts = this.getCart()
-        if (carts.length !== 0) {
-            id = carts[carts.length - 1].id + 1
-        }
-        return id
-    }
 }
+

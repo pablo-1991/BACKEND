@@ -1,0 +1,40 @@
+<section class="productListContainer flex flex-col gap-10">
+    <h1 class="text-white text-center text-xl">Productos disponibles</h1>
+    <article class="productList flex felx-col w-screen justify-center items-center gap-5 flex-wrap" id="cardContainer">
+        {{#each products}}
+        <div class="flex justify-center w-40 h-40">
+            <div class="rounded-lg shadow-lg bg-white">
+                <img class="rounded-t-lg h-28 w-40" src={{this.thumbnail}} alt="" />
+                <div class="flex justify-between p-2">
+                    <h5 class="text-gray-900 text-md font-medium mb-2">{{this.title}}</h5>
+                    <p class="text-gray-700 text-base mb-4">${{this.price}}</p>
+                </div>
+            </div>
+        </div>
+        {{/each}}
+    </article>
+</section>
+<section class="flex justify-center items-center mt-10">
+    <form action="/realtimeproducts" method="post" id="createProductForm"
+        class="bg-white w-96 flex flex-col justify-center items-center p-6 rounded-lg">
+        <label for="">Title:</label>
+        <input name="title" type="text" class="mb-5 w-full bg-slate-100 p-2 focus:outline-0" id="category" />
+        <label for="">Description:</label>
+        <input name="description" type="text" class="mb-5 w-full bg-slate-100 p-2 focus:outline-0" id="name" />
+        <label for="">Code:</label>
+        <input name="code" type="number" class="mb-5 w-full bg-slate-100 p-2 focus:outline-0" id="price" />
+        <label for="">Price:</label>
+        <input name="price" type="number" class="mb-5 w-full bg-slate-100 p-2 focus:outline-0" id="image" />
+        <label for="">Stock:</label>
+        <input name="stock" type="number" class="mb-5 w-full bg-slate-100 p-2 focus:outline-0" id="code" />
+        <label for="">Category:</label>
+        <input name="category" type="text" class="mb-5 w-full bg-slate-100 p-2 focus:outline-0" id="category" />
+        <label for="">thumbnail:</label>
+        <input name="thumbnail" type="text" class="mb-5 w-full bg-slate-100 p-2 focus:outline-0" id="stock" />
+        <input name="" type="submit"
+            class="bg-cyan-600 w-full text-xl font-medium p-3 rounded-xl hover:shadow-md hover:-translate-y-1 transition duration-250" />
+    </form>
+</section>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="index.js"></script>

@@ -1,15 +1,17 @@
 import { Router } from "express";
+import { __dirname } from "../utils.js";
 import ProductManager from "../productManager.js"
 const router = Router();
 
 
-const prodMan = new ProductManager("./files/productos.json");
+const prodMan = new ProductManager(__dirname+"/files/productos.json");
 
 router.get('/', async (req, res) => {
     const { limit } = req.query
     const products = await prodMan.getProducts(parseInt())
     const newProduct = products.slice(0, limit)
     res.json({ message: "Productos enviados correctamente", newProduct })
+    res.render("realtimeproducts", {newProduct})
 })
 
 router.get('/:pid', async (req, res) => {
