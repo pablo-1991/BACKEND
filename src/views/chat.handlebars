@@ -1,0 +1,18 @@
+<h2 class="portaUser">User: <span class="user" id="user"></span></h2>
+
+<form class="chatForm" id="chatForm">
+    <label for="message">Mensaje</label>
+    <input type="text" name="message" id="chatField" class="chatField">
+    <input type="submit" value="Send" class="chatBtn">
+</form>
+
+<div class="chatBox" id="chat"></div>
+
+
+{{!-- sweet Alert --}}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+{{!-- toastify --}}
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+{{!-- socket / main--}}
+<script src="/socket.io/socket.io.js"></script>
+<script src="../public/chat.js"></script>

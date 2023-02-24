@@ -1,23 +1,23 @@
 import fs from "fs";
+import { __dirname } from "../../utils.js";
+const path = __dirname + "/files/productos.json"
+
 
 export default class ProductManager {
-    constructor(path) {
-        this.path = path;
-    }
 
     async getProducts() {
-        try {
-            if (fs.existsSync(this.path)) {
-                const productos = await fs.promises.readFile(this.path, "utf-8");
-                const productosJSON = JSON.parse(productos);
-                return productosJSON;
-            } else {
-                return [];
+        if (fs.existsSync(path)) {
+            try {
+                const productos = await fs.promises.readFile(path, "utf-8");
+                return JSON.parse(productos);
             }
-        } catch (error) {
-            console.log(error);
+            catch (error) {
+                console.log(error);
+            }
         }
-        return this.path;
+        else {
+            return [];
+        }
     }
 
     async addProduct(products) {
@@ -38,14 +38,14 @@ export default class ProductManager {
             let id = productFile.length === 0 ? 1 : productFile[productFile.length - 1].id + 1
             const prod = { id, ...products }
             productFile.push(prod);
-            await fs.promises.writeFile(this.path, JSON.stringify(productFile));
+            await fs.promises.writeFile(path, JSON.stringify(productFile));
         } catch (error) {
             console.log(error);
         }
     }
 
     async deletAllProducts() {
-        if (fs.existsSync(this.path)) { await fs.promises.unlink(this.path) }
+        if (fs.existsSync(path)) { await fs.promises.unlink(path) }
     }
 
     async getProductById(id) {
@@ -54,7 +54,7 @@ export default class ProductManager {
         return prod;
     }
 
-    async updateProduct(id, product) { 
+    async updateProduct(id, product) {
         const products = await this.getProducts();
         products.forEach((prod) => {
             if (prod.id === id) {
@@ -67,13 +67,13 @@ export default class ProductManager {
                 prod.stock = product.stock
             }
         })
-        await fs.promises.writeFile(this.path, JSON.stringify(products))
+        await fs.promises.writeFile(path, JSON.stringify(products))
         return "Producto editado correctamente"
     }
 
     async deleteProduct(id) {
         const info = await this.getProducts();
         const newArray = info.filter(prod => prod.id !== id)
-        await fs.promises.writeFile(this.path, JSON.stringify(newArray))
+        await fs.promises.writeFile(path, JSON.stringify(newArray))
     }
 }

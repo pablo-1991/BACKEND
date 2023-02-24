@@ -1,33 +1,32 @@
 import fs from "fs";
-const path = "./files/cart.json"
+import { __dirname } from "../../utils.js";
+const path = __dirname + "/files/cart.json"
 
 
 export default class CartManager {
-    constructor(path) {
-        this.path = path
+    constructor() {
         this.carts = []
     }
 
     async saveFile() {
-        await fs.promises.writeFile(this.path, JSON.stringify(this.carts))
-        console.log(this.path, 'guardado con exito')
+        await fs.promises.writeFile(path, JSON.stringify(this.carts))
+        console.log(path, 'guardado con exito')
     }
 
     async getCart() {
         try {
-            if (!fs.existsSync(this.path)) {
-                console.log('Error: archivo no encontrado', this.path);
+            if (!fs.existsSync(path)) {
+                console.log('Error: archivo no encontrado', path);
                 return false;
             }
 
-            const data = await fs.promises.readFile(this.path, 'utf-8')
+            const data = await fs.promises.readFile(path, 'utf-8')
             this.carts = JSON.parse(data)
-            console.log(this.path, 'leido con exito')
+            console.log(path, 'leido con exito')
             return this.carts
         } catch (error) {
             console.log('Error: ', error)
         }
-
         return false;
     }
 

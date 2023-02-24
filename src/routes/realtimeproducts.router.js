@@ -1,11 +1,11 @@
 import { Router } from "express";
 const realtimeproducts = Router();
-import ProductManager from "../productManager.js";
+import ProductManager from "../dao/fileManagers/productManager.js";
 
 import { socketServer } from "../app.js";
 
 
-const prodMan = new ProductManager("./files/productos.json");
+const prodMan = new ProductManager();
 
 realtimeproducts.get("/", async (req, res) => {
     const { limit } = req.query;

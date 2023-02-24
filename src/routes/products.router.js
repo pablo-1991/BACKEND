@@ -1,10 +1,10 @@
 import { Router } from "express";
-import { __dirname } from "../utils.js";
-import ProductManager from "../productManager.js"
+//import ProductManager from "../dao/fileManagers/productManager.js"  // FILES
+import ProductManager from "../dao/mongoManagers/productManager.js";  //MONGODB
 const router = Router();
 
 
-const prodMan = new ProductManager(__dirname+"/files/productos.json");
+const prodMan = new ProductManager();
 
 router.get('/', async (req, res) => {
     const { limit } = req.query

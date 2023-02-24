@@ -61,7 +61,7 @@
         "price": 500,
         "status": true,
         "stock": 20,
-        "category": "A",
+        "category": "B",
         "thumbnail": "sin imagen"
     },
     {
@@ -72,7 +72,7 @@
         "price": 500,
         "status": true,
         "stock": 20,
-        "category": "A",
+        "category": "B",
         "thumbnail": "sin imagen"
     },
     {
@@ -83,7 +83,7 @@
         "price": 500,
         "status": true,
         "stock": 20,
-        "category": "A",
+        "category": "B",
         "thumbnail": "sin imagen"
     },
     {
@@ -94,7 +94,7 @@
         "price": 500,
         "status": true,
         "stock": 20,
-        "category": "A",
+        "category": "B",
         "thumbnail": "sin imagen"
     },
     {
@@ -105,7 +105,7 @@
         "price": 500,
         "status": true,
         "stock": 20,
-        "category": "A",
+        "category": "B",
         "thumbnail": "sin imagen"
     }
 ]
