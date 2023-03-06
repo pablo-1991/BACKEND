@@ -7,26 +7,59 @@ const router = Router();
 const cartMan = new cartManager();
 
 
+router.post('/', async (req, res) => {
+    const cart = req.body
+    const addedCart = await cartMan.addCart(cart)
+    res.json({ mensaje: "Carrito agregado", carrito: addedCart })
+})
+
+router.get('/', async (req,res)=>{
+    const carts = await cartMan.getCarts()
+    res.json({mensaje: 'carritos encontrados', carritos: carts})
+})
+
 router.get('/:cid', async (req, res) => {
-    let { cid } = req.params;
-    let cart = await cartMan.getCartById(parseInt(cid));
-    if (!cart) {
-        res.status(400).json({ message: 'el carrito ' + cid + ' no se encontró' })
-    } else { res.status(200).json({ message: 'productos del carrito ' + cid, productos: cart.products }) }})
+    const cid = req.params.cid
+    const cartFoundById = await cartMan.getCartById(cid)
+    console.log(cartFoundById.cart)
+    let cart = cartFoundById.cart
+    res.render('cart', {cart})
+})
 
+router.post('/:cid/products/:pid', async (req, res) => {
+    const cid = req.params.cid
+    const pid = req.params.pid
+    const addedProduct = await cartMan.addProductToCart(cid, pid)
+    res.json({ mensaje: `Producto agregado a carrito ${cid}`, carrito: addedProduct })
+})
 
-    router.post('/', (req, res) => {
-        const newCart = cartMan.addCart()
-        res.status(200).json({ message: 'carrito creado con éxito', Carrito: newCart })
-    })
+router.delete('/:cid/products/:pid', async (req,res)=>{
+    const cid = req.params.cid
+    const pid = req.params.pid
+    const deletedProduct = await cartMan.deleteProductFromCart(cid, pid)
+    res.json({ mensaje: `Producto eliminado del carrito ${cid}`, carrito: deletedProduct })
+})
 
-    router.post('/:cid/product/:pid', async (req, res) => {
-        const { cid, pid } = req.params
-        const { quantity } = req.body
+router.delete('/:cid', async(req,res)=>{
+    const cid = req.params.cid
+    const emptyCart = await cartMan.emptyCart(cid)
+    res.json({ mensaje: `Carrito ${cid} vaciado` })
+})
 
-        const cart = await cartMan.addToCart(parseInt(cid), parseInt(pid), parseInt(quantity))
-        res.status(200).json({ message: 'carrito actualizado ', cart: cart })
-    })
+router.put('/:cid/products/:pid', async (req,res)=>{
+    const cid = req.params.cid
+    const pid = req.params.pid
+    const quantity = req.body.quantity
+    const editedProductQty = await cartMan.editProductQty(cid,pid,quantity)
+    res.json({mensaje: `Producto editado: ${editedProductQty}`})
+})
 
+router.put('/:cid', async(req,res)=>{
+    const cid = req.params.cid
+    const newCart = req.body.cart
+    console.log(newCart)
+    const editedCart = await cartMan.editCart(cid, newCart)
+    res.json({mensaje: `Carrito editado: ${editedCart}`})
+})
 
-    export default router;
+export default router
