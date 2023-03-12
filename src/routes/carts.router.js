@@ -11,10 +11,12 @@ router.post('/', async (req, res) => {
     const cart = req.body
     const addedCart = await cartMan.addCart(cart)
     res.json({ mensaje: "Carrito agregado", carrito: addedCart })
+
 })
 
 router.get('/', async (req,res)=>{
     const carts = await cartMan.getCarts()
+    //res.render('carts', {carts})
     res.json({mensaje: 'carritos encontrados', carritos: carts})
 })
 
@@ -23,7 +25,7 @@ router.get('/:cid', async (req, res) => {
     const cartFoundById = await cartMan.getCartById(cid)
     console.log(cartFoundById.cart)
     let cart = cartFoundById.cart
-    res.render('cart', {cart})
+    res.render('carts', {cart})
 })
 
 router.post('/:cid/products/:pid', async (req, res) => {

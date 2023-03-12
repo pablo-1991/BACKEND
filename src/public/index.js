@@ -1,5 +1,6 @@
 const socket = io();
 
+
 const createProductForm = document.getElementById("createProductForm");
 const category = document.getElementById("category");
 const title = document.getElementById("title");
@@ -8,6 +9,7 @@ const thumbnail = document.getElementById("thumbnail");
 const code = document.getElementById("code");
 const stock = document.getElementById("stock");
 const cardContainer = document.getElementById("cardContainer");
+
 
 createProductForm.onsubmit = (e) => {
     const product = {

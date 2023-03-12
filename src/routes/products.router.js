@@ -10,7 +10,8 @@ const prodMan = new ProductManager();
 router.get('/', async (req, res) => {
     const { limit = 10, page = 1, sort, category } = req.query
     let products = await prodMan.getProducts(limit, page, sort, category) //category en la url va sin comillas
-    res.render('products', {products})
+    let user = req.session.name
+    res.render('products', {products, user})
 })
 
 router.get('/:pid', async (req, res) => {

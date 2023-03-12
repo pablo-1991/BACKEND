@@ -4,27 +4,34 @@ import session from "express-session";
 import { __dirname } from "./utils.js";
 import handlebars from "express-handlebars"
 import { Server } from "socket.io"
+import MongoStore from "connect-mongo";
 import path from "path"
+import passport from "passport";
+
 
 
 //IMPORTAR dbConfig
 import "./dao/dbConfig.js"
+//IMPORTAR passportStrategies
+import "./passport/passportStrategies.js"
 
 
 const app = express();
 const PORT = 8080
 
 import productsRouter from "./routes/products.router.js"
-import cartRouter from "./routes/cart.router.js"
+import cartRouter from "./routes/carts.router.js"
 import realTimeProductsRouter from "./routes/realtimeproducts.router.js"
+import usersRouter from "./routes/users.router.js"
+import viewsRouter from "./routes/views.router.js"
+
 
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
-//cookies
-const cookieKey = signedCookie
-app.use(cookieParser(cookieKey))
 
+//cookies
+app.use(cookieParser())
 
 //archivos estaticos (ruta a "/public"):
 app.use(express.static(path.join(__dirname, '/public')))
@@ -34,11 +41,28 @@ app.engine("handlebars", handlebars.engine())
 app.set("view engine", "handlebars") //qué motor de plantilla usamos
 app.set("views", __dirname + "/views")//para saber dónde está la carpeta "/views"
 
-//rutas
-app.use("/api/products", productsRouter)
-app.use("/api/carts", cartRouter)
-app.use("/api/realtimeproducts", realTimeProductsRouter)
+// MONGO SESSIONS
+app.use(
+    session({
+        secret: "sessionKey",
+        resave: false,
+        saveUninitialized: true,
+        store: new MongoStore({
+            mongoUrl: "mongodb+srv://pablo-1991:0000122@cluster0.mlrbkpp.mongodb.net/ECOMMERCE?retryWrites=true&w=majority"
+        })
+    })
+)
 
+//PASSPORT
+app.use(passport.initialize())  //inicializar passport
+app.use(passport.session())   //passport guarda info de session
+
+//rutas
+app.use("/products", productsRouter)
+app.use("/carts", cartRouter)
+app.use("/realtimeproducts", realTimeProductsRouter)
+app.use("/users", usersRouter)
+app.use("/views", viewsRouter)
 
 const httpServer = app.listen(PORT, () => {
     console.log(`Escuchando al puerto ${PORT}`)
