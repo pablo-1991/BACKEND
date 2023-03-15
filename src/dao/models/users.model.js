@@ -15,7 +15,8 @@ const usersSchema = new mongoose.Schema({
     },
     edad: {
         type: Number,
-        required: true
+        required: true,   
+        default: 0   // o required: false
     },
     password: {
         type: String,
