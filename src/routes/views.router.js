@@ -18,5 +18,8 @@ router.get("/errorLogin",(req, res) => {
     res.render("errorLogin")
 })
 
+router.get('/isAdmin',(req,res)=>{
+    res.render("isAdmin")
+})
 
 export default router

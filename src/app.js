@@ -24,7 +24,7 @@ import cartRouter from "./routes/carts.router.js"
 import realTimeProductsRouter from "./routes/realtimeproducts.router.js"
 import usersRouter from "./routes/users.router.js"
 import viewsRouter from "./routes/views.router.js"
-
+import jwtRouter from "./routes/jwt.router.js"
 
 
 app.use(express.json())
@@ -63,6 +63,7 @@ app.use("/carts", cartRouter)
 app.use("/realtimeproducts", realTimeProductsRouter)
 app.use("/users", usersRouter)
 app.use("/views", viewsRouter)
+app.use('/jwt',jwtRouter)
 
 const httpServer = app.listen(PORT, () => {
     console.log(`Escuchando al puerto ${PORT}`)

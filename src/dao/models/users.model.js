@@ -11,7 +11,8 @@ const usersSchema = new mongoose.Schema({
     },
     email: {
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
     edad: {
         type: Number,
@@ -21,6 +22,12 @@ const usersSchema = new mongoose.Schema({
     password: {
         type: String,
         required: true
+    },
+    rol: {
+        type: String,
+        enum: ['admin', 'user'],
+        required: false,
+        default: 'user'
     }
 })
 

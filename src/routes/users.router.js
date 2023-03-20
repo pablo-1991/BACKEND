@@ -48,12 +48,14 @@ router.post("/login", async (req, res) => {
         req.session.name = user.nombre
         req.session.email = email
         req.session.password = password
+        req.session.rol = user.rol
         if (email === "adminCoder@coder.com" && password === "adminCod3r123") {
-            req.session.isAdmin = true
+            req.session.rol = true
+            res.redirect("/views/isAdmin")
         } else {
-            req.session.isAdmin = false
+            req.session.rol = false
+            res.redirect("/products")
         }
-        res.redirect("/products")
     } else { res.redirect("/views/errorLogin") }
 })
 
@@ -65,7 +67,7 @@ router.get("/logout", async (req, res) => {
 })
 
 //registro con Github
-router.get("/registroGithub", passport.authenticate("github", { scope: ["user:email"] })) // hace peticion a GH
+router.get("/registroGithub", passport.authenticate("github", { scope: ['user:email'] })) // hace peticion a GH
 
 router.get("/github", passport.authenticate("github"), (req, res) => {
     req.session.email = req.user.email
