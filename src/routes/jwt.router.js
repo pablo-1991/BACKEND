@@ -1,27 +1,41 @@
+import passport from "passport"
 import { Router } from "express";
 import { generateToken } from "../utils.js";
 import UsersManager from "../dao/mongoManagers/usersManager.js";
 import { jwtValidation } from "../middlewares/jwt.middleware.js";
+
 const router = Router()
 
 const userManager = new UsersManager()
 
+// COOKIES
 
+// ****** generar token ******
 router.post('/login', async (req, res) => {
-    //const {email,password} = req.body
     const user = await userManager.loginUser(req.body)
     if (user) {
-        console.log('------');
         const token = generateToken(user)
-        return res.json({ token })
+        console.log("TOKEN GENERADO!");
+        return res.cookie("token", token, { httpOnly: true }).json({ token })
     }
-    res.json({ message: 'Usuario no existe' })
+    res.json({ message: "El usuario no existe..." })
 })
 
-
-router.get("/login", jwtValidation, (req, res) =>{
-    res.send("PROBANDO JWT")
+// ******* validar token *******
+router.get("/login", jwtValidation, (req, res) => {
+    res.send("TOKEN VALIDADO!")
 })
 
+// ****** devuelve usuario si existe el token *******
+router.get('/current', (req, res) => {
+    let token = req.cookies.token
+    let user = req.cookies.user.user
+    if (token) {
+        res.json({ tokenFromCookie: token, userFromCookie: user })
+        console.log(req.cookies)
+    } else {
+        console.log("ERROR! SIN TOKEN")
+    }
+})
 
 export default router

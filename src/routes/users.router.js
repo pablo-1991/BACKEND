@@ -48,12 +48,12 @@ router.post("/login", async (req, res) => {
         req.session.name = user.nombre
         req.session.email = email
         req.session.password = password
-        req.session.rol = user.rol
+        req.session.role = user.role
         if (email === "adminCoder@coder.com" && password === "adminCod3r123") {
-            req.session.rol = true
+            req.session.role = true
             res.redirect("/views/isAdmin")
         } else {
-            req.session.rol = false
+            req.session.role = false
             res.redirect("/products")
         }
     } else { res.redirect("/views/errorLogin") }
@@ -62,7 +62,7 @@ router.post("/login", async (req, res) => {
 router.get("/logout", async (req, res) => {
     req.session.destroy(error => {
         if (error) { console.log(error) }
-        else { res.redirect("/views") }
+        else { res.redirect("/views/login") }
     })
 })
 
@@ -71,6 +71,6 @@ router.get("/registroGithub", passport.authenticate("github", { scope: ['user:em
 
 router.get("/github", passport.authenticate("github"), (req, res) => {
     req.session.email = req.user.email
-    res.redirect("/views/products")}) //GH devuelve la respuesta
+    res.redirect("/products")}) //GH devuelve la respuesta
 
 export default router
