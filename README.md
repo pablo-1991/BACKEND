@@ -4,23 +4,23 @@
 
  -Products:
 
-- '/api/products/' GET: trae todos los productos <br>
-- '/api/products/' POST: agrega un nuevo producto <br>
-- '/api/products/:pid' GET: trae un producto por id <br>
-- '/api/products/:pid' PUT: edita un producto por id <br>
-- '/api/products/:pid' DELETE: elimina un producto por id <br>
+- '/products/' GET: trae todos los productos <br>
+- '/products/' POST: agrega un nuevo producto <br>
+- '/products/:pid' GET: trae un producto por id <br>
+- '/products/:pid' PUT: edita un producto por id <br>
+- '/products/:pid' DELETE: elimina un producto por id <br>
 
 
  -Carts:
 
-- '/api/carts/' GET: trae todos los carritos <br>
-- '/api/carts/' POST: agrega un nuevo carrito <br>
-- '/api/carts/:cid' GET trae un carrito por id <br>
-- '/api/carts/:cid' DELETE vacía un carrito por id <br>
-- '/api/carts/:cid' PUT edita un carrit por id <br>
-- '/api/carts/:cid/product/:pid' POST agrega un producto por id a un carrito por su id <br>
-- '/api/carts/:cid/product/:pid' DELETE elimina un producto por id de un carrito por id <br>
-- '/api/carts/:cid/product/:pid' PUT modifica un producto por id de un carrito por id <br>
+- '/carts/' GET: trae todos los carritos <br>
+- '/carts/' POST: agrega un nuevo carrito <br>
+- '/carts/:cid' GET trae un carrito por id <br>
+- '/carts/:cid' DELETE vacía un carrito por id <br>
+- '/carts/:cid' PUT edita un carrit por id <br>
+- '/carts/:cid/product/:pid' POST agrega un producto por id a un carrito por su id <br>
+- '/carts/:cid/product/:pid' DELETE elimina un producto por id de un carrito por id <br>
+- '/carts/:cid/product/:pid' PUT modifica un producto por id de un carrito por id <br>
 
 
  -Users:
