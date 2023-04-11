@@ -1,6 +1,6 @@
 import { Router } from "express";
 import passport from "passport";
-import UsersManager from "../dao/mongoManagers/usersManager.js";
+import UsersManager from "../dao/mongoDB/mongoManagers/usersManager.js";
 
 
 const router = Router()
@@ -41,23 +41,14 @@ router.post("/registro",
     })
 )
 
-router.post("/login", async (req, res) => {
-    const { email, password } = req.body
-    const user = await usersMan.loginUser(req.body)
-    if (user) {
-        req.session.name = user.nombre
-        req.session.email = email
-        req.session.password = password
-        req.session.role = user.role
-        if (email === "adminCoder@coder.com" && password === "adminCod3r123") {
-            req.session.role = true
-            res.redirect("/views/isAdmin")
-        } else {
-            req.session.role = false
-            res.redirect("/products")
-        }
-    } else { res.redirect("/views/errorLogin") }
-})
+router.post(
+    '/login',
+    passport.authenticate('login', {
+        failureRedirect: '/views/errorLogin',
+        successRedirect: '/products',
+        passReqToCallback: true,
+    })
+)
 
 router.get("/logout", async (req, res) => {
     req.session.destroy(error => {
@@ -71,6 +62,7 @@ router.get("/registroGithub", passport.authenticate("github", { scope: ['user:em
 
 router.get("/github", passport.authenticate("github"), (req, res) => {
     req.session.email = req.user.email
-    res.redirect("/products")}) //GH devuelve la respuesta
+    res.redirect("/products")
+}) //GH devuelve la respuesta
 
 export default router

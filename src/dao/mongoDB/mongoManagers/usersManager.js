@@ -1,5 +1,5 @@
-import { userModel } from "../models/users.model.js";
-import { hashPassword, comparePasswords } from "../../utils.js";
+import { userModel } from "../models/users.model.js"
+import { hashPassword, comparePasswords } from "../../../utils.js";
 
 export default class UsersManager {
     async createUser(user) {

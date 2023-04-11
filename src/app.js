@@ -7,17 +7,17 @@ import { Server } from "socket.io"
 import MongoStore from "connect-mongo";
 import path from "path"
 import passport from "passport";
+import config from "./config.js";
 
 
 
 //IMPORTAR dbConfig
-import "./dao/dbConfig.js"
+import "./dao/mongoDB/dbConfig.js"
 //IMPORTAR passportStrategies
 import "./passport/passportStrategies.js"
 
 
 const app = express();
-const PORT = 8080
 
 import productsRouter from "./routes/products.router.js"
 import cartRouter from "./routes/carts.router.js"
@@ -65,6 +65,8 @@ app.use("/users", usersRouter)
 app.use("/views", viewsRouter)
 app.use('/jwt',jwtRouter)
 
+
+const PORT = config.PORT
 const httpServer = app.listen(PORT, () => {
     console.log(`Escuchando al puerto ${PORT}`)
 })
