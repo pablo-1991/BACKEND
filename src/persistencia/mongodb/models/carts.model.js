@@ -6,13 +6,14 @@ const cartsSchema = new mongoose.Schema({
             {
                 id: {
                     type: mongoose.Schema.Types.ObjectId,
-                    ref: 'Products'
+                    ref: 'Products',
                 },
                 quantity: {
                     type: Number
                 }
             }]
     }
+
 })
 
 cartsSchema.pre('find', function (next) {

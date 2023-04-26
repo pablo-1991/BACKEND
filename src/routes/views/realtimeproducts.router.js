@@ -1,8 +1,8 @@
 import { Router } from "express";
 const realtimeproducts = Router();
-import ProductManager from "../dao/fileManagers/productManager.js";
+import ProductManager from "../../persistencia/DAO/fileManagers/productManager.js";
 
-import { socketServer } from "../app.js";
+import { socketServer } from "../../app.js";
 
 
 const prodMan = new ProductManager();

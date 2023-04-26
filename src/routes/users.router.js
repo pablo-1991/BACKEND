@@ -1,6 +1,7 @@
-import { Router } from "express";
-import passport from "passport";
-import UsersManager from "../dao/mongoDB/mongoManagers/usersManager.js";
+import { Router } from 'express'
+import UsersManager from '../persistencia/DAO/mongoManagers/usersManager.js'
+import passport from 'passport'
+import { getUsersDataController } from '../controllers/users.controller.js'
 
 
 const router = Router()
@@ -64,5 +65,8 @@ router.get("/github", passport.authenticate("github"), (req, res) => {
     req.session.email = req.user.email
     res.redirect("/products")
 }) //GH devuelve la respuesta
+
+
+router.get('/current', getUsersDataController) // obtiene datos del usuario
 
 export default router

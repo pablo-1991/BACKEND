@@ -9,9 +9,8 @@ import {
 export const getProductsController = async (req, res) => {
     const { limit = 10, page = 1, sort, category } = req.query;
     try {
-        let products = await getProductsService(limit, page, sort, category); //category en la url va sin comillas
+        let products = await getProductsService(limit, page, sort, category);
         let user = req.session.name;
-        //res.json({ mensaje: response })
         res.render("products", { products, user });
     } catch (error) {
         console.log("error");

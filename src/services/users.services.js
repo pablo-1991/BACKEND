@@ -1,12 +1,21 @@
-import { createUser, loginUser } from '../dao/users.persistence.js'
+import {
+    createUser,
+    loginUser,
+    getUsersData
+} from '../persistencia/users.persistence.js'
 
 
-export async function createUserService(user) {
+export async function createUserService(user){
     const newUser = await createUser(user)
     return newUser
 }
 
-export async function loginUserService(user) {
+export async function loginUserService(user){
     const newUser = await loginUser(user)
     return newUser
+}
+
+export async function getUsersDataService(usersMail){
+    const usersData = await getUsersData(usersMail)
+    return usersData
 }

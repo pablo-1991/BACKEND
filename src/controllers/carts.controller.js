@@ -6,7 +6,8 @@ import {
     deleteProductFromCartService,
     emptyCartService,
     editProductQtyService,
-    editCartService
+    editCartService,
+    completeSaleService
 } from '../services/carts.services.js'
 
 export const addCartController = async (req, res) => {
@@ -17,7 +18,6 @@ export const addCartController = async (req, res) => {
     } catch (error) {
         console.log('errro');
     }
-
 }
 
 export const getCartsController = async (req, res) => {
@@ -27,20 +27,17 @@ export const getCartsController = async (req, res) => {
     } catch (error) {
         console.log('error');
     }
-
 }
 
 export const getCartByIdController = async (req, res) => {
     try {
         const cid = req.params.cid
         const cartFoundById = await getCartByIdService(cid)
-        //res.json({ mensaje: "Carrito encontrado por id", carrito: cartFoundById })
-        let cart = cartFoundById.cart
-        res.render('cart', { cart })
+        let cart = cartFoundById.products
+        res.json({ mensaje: cart })
     } catch (error) {
         console.log('error');
     }
-
 }
 
 export const addProductToCartController = async (req, res) => {
@@ -52,7 +49,6 @@ export const addProductToCartController = async (req, res) => {
     } catch (error) {
         console.log('error')
     }
-
 }
 
 export const deleteProductFromCartController = async (req, res) => {
@@ -74,7 +70,6 @@ export const emptyCartController = async (req, res) => {
     } catch (error) {
         console.log('error')
     }
-
 }
 
 export const editProductQtyController = async (req, res) => {
@@ -88,7 +83,6 @@ export const editProductQtyController = async (req, res) => {
     } catch (error) {
         console.log('error');
     }
-
 }
 
 export const editCartController = async (req, res) => {
@@ -101,5 +95,16 @@ export const editCartController = async (req, res) => {
     } catch (error) {
         console.log('error');
     }
+}
 
+export const completeSaleController = async (req, res) => {
+    try {
+        console.log('viene de session de cart', req.session, req.cookies, req.user)
+        const cid = req.params.cid
+        const algo = await completeSaleService(cid)
+        console.log('del controller', algo)
+        res.json({ mensaje: `Carrito actualizado` })
+    } catch (error) {
+        console.log('error')
+    }
 }

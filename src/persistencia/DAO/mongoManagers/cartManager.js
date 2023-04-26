@@ -1,8 +1,11 @@
-import { cartsModel } from "../models/carts.model.js";
+import { cartsModel } from "../../mongodb/models/carts.model.js";
+import { productsModel } from "../../mongodb/models/products.model.js";
+import { ticketsModel } from "../../mongodb/models/tickets.model.js";
 
 export default class CartManager {
     async addCart(cart) {
         console.log(cart);
+        console.log("funciona");
         let newCartFromUuser = { products: cart };
         try {
             const newCart = await cartsModel.create(newCartFromUuser);
@@ -27,8 +30,9 @@ export default class CartManager {
         try {
             const cart = await cartsModel
                 .findById(cid)
-                .populate({ path: "cart.id" })
+                .populate({ path: "products.id" })
                 .lean();
+            console.log(cart);
             return cart;
         } catch (error) {
             console.log(error);
@@ -50,7 +54,9 @@ export default class CartManager {
             } else {
                 cart.products.push({ id: pid, quantity: 1 });
             }
+
             await cart.save();
+
             return cart;
         } catch (error) {
             console.log(error);
@@ -65,9 +71,7 @@ export default class CartManager {
             let productIndex = cart.products.findIndex((el) => el.id == pid);
             if (cart.products[productIndex].quantity > 1) {
                 cart.products[productIndex].quantity -= 1;
-            } else {
-                cart.products.splice(productIndex, 1);
-            }
+            } else { cart.products.splice(productIndex, 1); }
             await cart.save();
             return cart;
         } catch (error) {
@@ -79,7 +83,7 @@ export default class CartManager {
         try {
             const cart = await cartsModel.findOne({ _id: cid });
             if (!cart) return console.log("carrito no encontrado");
-            cart.products = []
+            cart.products = [];
             await cart.save();
             return cart.products;
         } catch (error) {
@@ -92,7 +96,7 @@ export default class CartManager {
         try {
             const cart = await cartsModel.findOne({ _id: cid });
             if (!cart) return console.log("carrito no encontrado");
-            console.log(cart)
+            console.log(cart);
             let productIndex = cart.products.findIndex((el) => el.id == pid);
             console.log(productIndex);
             cart.products[productIndex].quantity = quantity;
@@ -110,6 +114,66 @@ export default class CartManager {
             cart.products = newCart;
             await cart.save();
             return cart.products;
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    async completeSale(cid) {
+        const productsWithoutEnoughStock = [];
+        let unitPrices = [];
+        let ticket;
+        let product;
+        let cart;
+        let el;
+        let newProductsInCart = []
+        try {
+            cart = await cartsModel.findOne({ _id: cid });
+            console.log('cart', cart)
+            let iterations = cart.products.length
+
+            for (let index = 0; index < iterations; index++) {
+
+                console.log('cart dentro del for', cart)
+                el = cart.products[index];
+                console.log('el', el)
+                console.log("entra al for", index + 1);
+                product = await productsModel.findOne({ _id: el.id });
+
+                if (el.quantity <= product.stock) {
+                    console.log("pasa x if", index + 1);
+                    //modifica el stock de productos
+                    product.stock = product.stock - el.quantity;
+
+                    //para calcular total
+                    let subtotal = product.price * el.quantity;
+                    unitPrices = [...unitPrices, subtotal];
+
+                    await product.save();
+                    //modifica el carrito
+                    // cart.products.splice(index, 1);
+
+                } else {
+                    newProductsInCart.push(el)
+                    productsWithoutEnoughStock.push(el.id);
+                    console.log(`cantidad de stock insuficiente del producto ${product}`);
+                }
+            }
+
+            cart.products = newProductsInCart
+            console.log('cart al final', cart)
+            await cart.save();
+            const tickets = await ticketsModel.find();
+            let code = parseInt(tickets[tickets.length - 1].code) + 1;
+            ticket = await ticketsModel.create({
+                code: `${code}`,
+                purchase_datetime: new Date().toLocaleString(),
+                amount: unitPrices.reduce((acc, el) => acc + el, 0),
+                purchaser: "Pablo",
+            });
+            console.log("ticket del manager", ticket);
+
+            return { ticket, productsWithoutEnoughStock };
         } catch (error) {
             console.log(error);
         }

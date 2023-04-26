@@ -1,40 +1,41 @@
 import mongoose from "mongoose";
 
 const usersSchema = new mongoose.Schema({
-    nombre: {
+
+    role: {
         type: String,
-        required: true
+        default: "user",
     },
-    apellido: {
+
+    first_name: {
         type: String,
-        required: true
+        required: true,
+    },
+    last_name: {
+        type: String,
+        required: true,
+    },
+    full_name: {
+        type: String
     },
     email: {
         type: String,
         required: true,
-        unique: true
+        unique: true,
     },
-    edad: {
+    age: {
         type: Number,
         required: true,
-        default: 0   // o required: false
     },
     password: {
         type: String,
-        required: true
-    },
-    role: {
-        type: String,
-        enum: ['admin', 'user'],
-        required: false,
-        default: 'user'
+        required: true,
     },
     cartId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Carts",
+        ref: 'Carts',
     },
     required: false
-})
+});
 
-
-export const userModel = mongoose.model("Users", usersSchema)
+export const userModel = mongoose.model("Users", usersSchema);

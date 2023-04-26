@@ -1,0 +1,16 @@
+<h1>Centro de mensajes</h1>
+<h2>Ingresar Mensaje</h2>
+<form id="formularioChat">
+    <input type="text" name="alias" id="alias" placeholder="Escribe tu nombre" required>
+    <input type="text" name="message" id="message" placeholder="Escribe tu mensaje" required>
+    <input type="submit" value="Enviar">
+</form>
+
+<div id="chat">
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.7/handlebars.min.js"
+    integrity="sha512-RNLkV3d+aLtfcpEyFG8jRbnWHxUqVZozacROI4J2F1sTaDqo1dPQYs01OMi1t1w9Y2FdbSCDSQ2ZVdAC8bzgAg=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script src="../index.js"></script>

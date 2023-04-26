@@ -1,6 +1,6 @@
-import File from './fileManagers/CartManager.js'
-import MongoDb from './mongoDB/mongoManagers/CartManager.js'
-import {cartsModel} from './mongoDB/models/carts.model.js'
+import File from './DAO/fileManagers/cartManager.js'
+import MongoDb from './DAO/mongoManagers/cartManager.js'
+import {cartsModel} from './mongodb/models/carts.model.js'
 import {Command} from 'commander'
 
 const program = new Command();
@@ -9,7 +9,7 @@ program.parse();
 
 let persistence;
 
-let argv = program.args[0]
+let argv = program.args[0] = "mongo"
 
 switch (argv) {
     case 'fs':
@@ -52,4 +52,8 @@ export async function editProductQty(cid, pid, quantity) {
 
 export async function editCart(cid, newCart) {
     return await persistence.editCart(cid, newCart)
+}
+
+export async function completeSale(cid){
+    return await persistence.completeSale(cid)
 }

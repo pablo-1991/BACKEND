@@ -1,38 +1,46 @@
-const socket = io();
+const socketClient = io()
 
 
-const createProductForm = document.getElementById("createProductForm");
-const category = document.getElementById("category");
-const title = document.getElementById("title");
-const price = document.getElementById("price");
-const thumbnail = document.getElementById("thumbnail");
-const code = document.getElementById("code");
-const stock = document.getElementById("stock");
-const cardContainer = document.getElementById("cardContainer");
+const title = document.getElementById('title')
+const description = document.getElementById('description')
+const price = document.getElementById('price')
+const stock = document.getElementById('stock')
+const newProducts = document.getElementById('newProducts')
+const formulario = document.getElementById('formulario')
 
 
-createProductForm.onsubmit = (e) => {
-    const product = {
-        category: category.value,
-        title: title.value,
-        price: price.value,
-        image: thumbnail.value,
-        code: code.value,
-        stock: stock.value,
-    };
-};
+//**********CHAT*****************/
 
-socket.on("sendProduct", (prod) => {
-    const card = `<div class="flex justify-center w-40 h-40">
-        <div class="rounded-lg shadow-lg bg-white">
-        <img class="rounded-t-lg h-28 w-40" src=${prod.thumbnail} alt="" />
-        <div class="flex justify-between p-2">
-            <h5
-            class="text-gray-900 text-md font-medium mb-2"
-            >${prod.title}</h5>
-            <p class="text-gray-700 text-base mb-4">$ ${prod.price}</p>
-        </div>
-        </div>
-    </div>`;
-    cardContainer.innerHTML += card;
-});
+const messageInput = document.getElementById('message')
+const formularioChat = document.getElementById('formularioChat')
+const alias = document.getElementById('alias')
+
+
+formularioChat.onsubmit = (e) => {
+    e.preventDefault()
+    console.log(messageInput.value)
+    const chat = {
+        user: alias.value,
+        message: messageInput.value,
+    }
+    console.log(chat)
+    socketClient.emit('update-chat', chat)
+    messageInput.value = ''
+
+}
+// render-chat
+socketClient.on('chat', manejarEventoChat);
+async function manejarEventoChat(chat) {
+    console.log(chat)
+
+    const recursoRemoto = await fetch('/hbs/chat.hbs')
+    const textoPlantilla = await recursoRemoto.text()
+    const functionTemplate = Handlebars.compile(textoPlantilla)
+    const html = functionTemplate({ chat })
+    document.getElementById('chat').innerHTML = html
+}
+
+
+function addProductToCart() {
+    console.log('clic')
+}

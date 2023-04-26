@@ -1,4 +1,4 @@
-import { productsModel } from "../models/products.model.js";
+import { productsModel } from "../../mongodb/models/products.model.js";
 
 export default class ProductManager {
     async getProducts(limit, page, sort, category) {
@@ -37,8 +37,8 @@ export default class ProductManager {
                 nextPage: allProductsDB.nextPage,
                 hasPrevPage: allProductsDB.hasPrevPage,
                 hasNextPage: allProductsDB.hasNextPage,
-                prevLink: allProductsDB.prevPage ? `https://localhost8080/api/products?page=${allProductsDB.prevPage}` : null,
-                nextLink: allProductsDB.nextPage ? `https://localhost8080/api/products?page=${allProductsDB.nextPage}` : null,
+                prevLink: allProductsDB.prevPage ? `https://localhost8080/products?page=${allProductsDB.prevPage}` : null,
+                nextLink: allProductsDB.nextPage ? `https://localhost8080/products?page=${allProductsDB.nextPage}` : null,
             }
             console.log(response)
 

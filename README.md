@@ -21,15 +21,19 @@
 - '/carts/:cid/product/:pid' POST agrega un producto por id a un carrito por su id <br>
 - '/carts/:cid/product/:pid' DELETE elimina un producto por id de un carrito por id <br>
 - '/carts/:cid/product/:pid' PUT modifica un producto por id de un carrito por id <br>
+- '/carts/:cid/purchase' POST para completar compra de un carrito <br>
+
+ -Chat:
+
+- '/chat/' GET renderiza chat <br>
 
 
  -Users:
 
-- '/users/registro' POST registra usuarios <br>
-- '/users/login' POST loguea usuarios <br>
 - '/users/logout' GET cierra sessión de usuarios <br>
 - '/users/registroGithub' GET registra usuarios por Github <br>
 - '/users/' GET recibe datos del usuario desde Github <br>
+- '/users/current' GET obtiene los datos del usuario actual <br>
 
 
  -JWT:

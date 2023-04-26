@@ -12,7 +12,7 @@ import config from "./config.js";
 
 
 //IMPORTAR dbConfig
-import "./dao/mongoDB/dbConfig.js"
+import './persistencia/mongodb/dbConfig.js'
 //IMPORTAR passportStrategies
 import "./passport/passportStrategies.js"
 
@@ -21,9 +21,10 @@ const app = express();
 
 import productsRouter from "./routes/products.router.js"
 import cartRouter from "./routes/carts.router.js"
-import realTimeProductsRouter from "./routes/realtimeproducts.router.js"
+import realTimeProductsRouter from "./routes/views/realtimeproducts.router.js"
 import usersRouter from "./routes/users.router.js"
-import viewsRouter from "./routes/views.router.js"
+import viewsRouter from "./routes/views/views.router.js"
+import chatRouter from './routes/views/messages.router.js'
 import jwtRouter from "./routes/jwt.router.js"
 
 
@@ -62,14 +63,18 @@ app.use("/products", productsRouter)
 app.use("/carts", cartRouter)
 app.use("/realtimeproducts", realTimeProductsRouter)
 app.use("/users", usersRouter)
+app.use('/chat', chatRouter)
 app.use("/views", viewsRouter)
-app.use('/jwt',jwtRouter)
+app.use('/jwt', jwtRouter)
 
 
 const PORT = config.PORT
 const httpServer = app.listen(PORT, () => {
     console.log(`Escuchando al puerto ${PORT}`)
 })
+
+import MessageManager from './persistencia/DAO/mongoManagers/messageManager.js'
+const messageManager = new MessageManager()
 
 //websocket
 export const socketServer = new Server(httpServer)
@@ -87,5 +92,20 @@ socketServer.on('connection', socket => {
         console.log(newProduct)
         newProductsArray.push(newProduct)
         socketServer.emit('newProductsArray', newProductsArray)
+    })
+})
+
+
+/* CHAT */
+socketServer.on('connection', async (socket) => {
+    console.log(`Cliente conectado: ${socket.id}`)
+    socket.on('disconnect', () => {
+        console.log(`Cliente desconectado: ${socket.id}`)
+    })
+
+    socket.emit('chat', await messageManager.getMessages());
+    socket.on('update-chat', async (newMessage) => {
+        await messageManager.addMessage(newMessage)
+        socketServer.sockets.emit('chat', await messageManager.getMessages());
     })
 })

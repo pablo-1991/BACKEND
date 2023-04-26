@@ -1,7 +1,8 @@
 import mongoose from 'mongoose'
-import config from "../../config.js"
+import config from '../../config.js'
 
 mongoose.set('strictQuery', false)
+
 
 const URI = config.MONGOURL
 

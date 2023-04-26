@@ -4,7 +4,7 @@ import {
     addProduct, 
     deleteProduct, 
     updateProduct
-} from '../dao/products.persistance.js'
+} from '../persistencia/products.persistence.js'
 
 export async function getProductsService(limit, page, sort, category){
     const products = await getProducts(limit, page, sort, category)
