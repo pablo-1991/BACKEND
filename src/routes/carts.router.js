@@ -18,7 +18,7 @@ const router = Router();
 router.get("/", getCartsController)
 router.post("/", addCartController)
 router.get("/:cid", getCartByIdController)
-router.post("/:cid/product/:pid", verificarUsuarioClient, addProductToCartController)
+router.post("/:cid/product/:pid", addProductToCartController)
 router.delete("/:cid/product/:pid", deleteProductFromCartController)
 router.delete("/:cid", emptyCartController)
 router.put("/:cid/product/:pid", editProductQtyController)

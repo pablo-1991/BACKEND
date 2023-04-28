@@ -9,13 +9,14 @@ import {
 export const getProductsController = async (req, res) => {
     const { limit = 10, page = 1, sort, category } = req.query;
     try {
-        let products = await getProductsService(limit, page, sort, category);
-        let user = req.session.name;
-        res.render("products", { products, user });
+        let userName = req.user.first_name;
+        let user = req.user
+        let products = await getProductsService(limit, page, sort, category, user)
+        res.render("products", { products, userName });
     } catch (error) {
         console.log("error");
     }
-};
+}
 
 export const getProductByIdController = async (req, res) => {
     try {
@@ -24,12 +25,11 @@ export const getProductByIdController = async (req, res) => {
     } catch (error) {
         console.log("error");
     }
-};
+}
 
 export const addProductController = async (req, res) => {
     try {
         let newProduct = req.body;
-
         const newProductCreated = await addProductService(newProduct);
         res.json({
             mensage: "Producto creado con éxito",
@@ -65,4 +65,4 @@ export const deleteProductController = async (req, res) => {
     } catch (error) {
         console.log("error");
     }
-};
+}

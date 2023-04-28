@@ -49,8 +49,12 @@ app.use(
         resave: false,
         saveUninitialized: true,
         store: new MongoStore({
-            mongoUrl: "mongodb+srv://pablo-1991:0000122@cluster0.mlrbkpp.mongodb.net/ECOMMERCE?retryWrites=true&w=majority"
-        })
+            mongoUrl: "mongodb+srv://pablo-1991:0000122@cluster0.mlrbkpp.mongodb.net/ECOMMERCE?retryWrites=true&w=majority",
+            collectionName: 'sessions'
+        }),
+        cookie: {
+            maxAge: 1000 * 60 * 60 * 24
+        }
     })
 )
 

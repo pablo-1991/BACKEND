@@ -1,7 +1,8 @@
+import UsersRepository from '../persistencia/repositories/users.repositories.js'
 import {
     createUser,
     loginUser,
-    getUsersData
+    //getUsersData
 } from '../persistencia/users.persistence.js'
 
 
@@ -15,7 +16,9 @@ export async function loginUserService(user){
     return newUser
 }
 
-export async function getUsersDataService(usersMail){
-    const usersData = await getUsersData(usersMail)
-    return usersData
+export async function getUsersDataService(userFromSession){
+    //   const userFromDTO = new UsersRepository(user)
+   //acá da la vuelta, poner DTO
+       //const usersData = await getUsersData(userFromSession)
+    return userFromSession
 }

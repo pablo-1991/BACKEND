@@ -13,8 +13,7 @@ amount: {
     type: Number
 },
 purchaser: {
-    type: String,
-    
+    type: String, 
 }
 })
 

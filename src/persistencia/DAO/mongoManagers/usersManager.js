@@ -40,8 +40,4 @@ export default class UsersManager {
             return null
         }
     }
-    async getUsersData(usersMail) {
-        const usersData = await userModel.find({ email: usersMail })
-        return usersData
-    }
 }

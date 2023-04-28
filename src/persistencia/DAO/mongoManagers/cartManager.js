@@ -5,7 +5,6 @@ import { ticketsModel } from "../../mongodb/models/tickets.model.js";
 export default class CartManager {
     async addCart(cart) {
         console.log(cart);
-        console.log("funciona");
         let newCartFromUuser = { products: cart };
         try {
             const newCart = await cartsModel.create(newCartFromUuser);
@@ -54,9 +53,7 @@ export default class CartManager {
             } else {
                 cart.products.push({ id: pid, quantity: 1 });
             }
-
             await cart.save();
-
             return cart;
         } catch (error) {
             console.log(error);
@@ -71,7 +68,9 @@ export default class CartManager {
             let productIndex = cart.products.findIndex((el) => el.id == pid);
             if (cart.products[productIndex].quantity > 1) {
                 cart.products[productIndex].quantity -= 1;
-            } else { cart.products.splice(productIndex, 1); }
+            } else {
+                cart.products.splice(productIndex, 1);
+            }
             await cart.save();
             return cart;
         } catch (error) {
@@ -92,7 +91,6 @@ export default class CartManager {
     }
 
     async editProductQty(cid, pid, quantity) {
-        console.log("llega");
         try {
             const cart = await cartsModel.findOne({ _id: cid });
             if (!cart) return console.log("carrito no encontrado");
@@ -119,7 +117,7 @@ export default class CartManager {
         }
     }
 
-    async completeSale(cid) {
+    async completeSale(cid, userFulllName) {
         const productsWithoutEnoughStock = [];
         let unitPrices = [];
         let ticket;
@@ -133,7 +131,6 @@ export default class CartManager {
             let iterations = cart.products.length
 
             for (let index = 0; index < iterations; index++) {
-
                 console.log('cart dentro del for', cart)
                 el = cart.products[index];
                 console.log('el', el)
@@ -144,14 +141,10 @@ export default class CartManager {
                     console.log("pasa x if", index + 1);
                     //modifica el stock de productos
                     product.stock = product.stock - el.quantity;
-
                     //para calcular total
                     let subtotal = product.price * el.quantity;
                     unitPrices = [...unitPrices, subtotal];
-
                     await product.save();
-                    //modifica el carrito
-                    // cart.products.splice(index, 1);
 
                 } else {
                     newProductsInCart.push(el)
@@ -169,10 +162,9 @@ export default class CartManager {
                 code: `${code}`,
                 purchase_datetime: new Date().toLocaleString(),
                 amount: unitPrices.reduce((acc, el) => acc + el, 0),
-                purchaser: "Pablo",
+                purchaser: userFulllName,
             });
             console.log("ticket del manager", ticket);
-
             return { ticket, productsWithoutEnoughStock };
         } catch (error) {
             console.log(error);

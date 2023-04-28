@@ -100,10 +100,13 @@ export const editCartController = async (req, res) => {
 export const completeSaleController = async (req, res) => {
     try {
         console.log('viene de session de cart', req.session, req.cookies, req.user)
+        const buyer = req.user
+        console.log('buyer', buyer)
         const cid = req.params.cid
-        const algo = await completeSaleService(cid)
+        const algo = await completeSaleService(cid, buyer.full_name)
         console.log('del controller', algo)
         res.json({ mensaje: `Carrito actualizado` })
+
     } catch (error) {
         console.log('error')
     }
