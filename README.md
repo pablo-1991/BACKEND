@@ -54,3 +54,7 @@
  -Real Time:
 
 - '/realtimeproducts/' GET renderiza productos en tiempo real <br>
+
+
+ -Mock:
+- '/products/mockingproducts' mock de productos <br>

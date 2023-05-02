@@ -1,4 +1,3 @@
-import { mongo } from 'mongoose';
 import File from './DAO/fileManagers/productManager.js'
 import MongoDb from './DAO/mongoManagers/productManager.js'
 import { productsModel } from './mongodb/models/products.model.js'
@@ -42,4 +41,8 @@ export async function deleteProduct(id) {
 
 export async function updateProduct(id, product) {
     return await persistence.updateProduct(id, product)
+}
+
+export async function mockedProducts() {
+    return await persistence.mockedProducts()
 }

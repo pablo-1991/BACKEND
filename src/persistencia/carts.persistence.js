@@ -1,5 +1,5 @@
-import File from './DAO/fileManagers/cartManager.js'
-import MongoDb from './DAO/mongoManagers/cartManager.js'
+import File from './DAO/fileManagers/CartManager.js'
+import MongoDb from './DAO/mongoManagers/CartManager.js'
 import {cartsModel} from './mongodb/models/carts.model.js'
 import {Command} from 'commander'
 
@@ -54,6 +54,6 @@ export async function editCart(cid, newCart) {
     return await persistence.editCart(cid, newCart)
 }
 
-export async function completeSale(cid, userFullname){
-    return await persistence.completeSale(cid, userFullname)
+export async function completeSale(cid, userFullName){
+    return await persistence.completeSale(cid, userFullName)
 }

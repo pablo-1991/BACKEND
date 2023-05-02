@@ -1,5 +1,4 @@
 import { Router } from "express";
-import { verificarUsuarioClient } from "../middlewares/auth.js";
 import {
     addCartController,
     editCartController,
@@ -21,7 +20,7 @@ router.get("/:cid", getCartByIdController)
 router.post("/:cid/product/:pid", addProductToCartController)
 router.delete("/:cid/product/:pid", deleteProductFromCartController)
 router.delete("/:cid", emptyCartController)
-router.put("/:cid/product/:pid", editProductQtyController)
+router.put("/:cid/product/:pid/:qty", editProductQtyController)
 router.put("/:cid", editCartController)
 router.post('/:cid/purchase', completeSaleController)
 

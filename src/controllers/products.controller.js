@@ -4,39 +4,52 @@ import {
     addProductService,
     deleteProductService,
     updateProductService,
+    mockedProductsService,
 } from "../services/products.services.js";
+import CustomError from "../utils/errors/CustomError.js";
+import {
+    ErrorsCause,
+    ErrorsMessage,
+    ErrorsName,
+} from "../utils/errors/ErrorsEnum.js";
 
 export const getProductsController = async (req, res) => {
     const { limit = 10, page = 1, sort, category } = req.query;
+    if (typeof limit !== "number" || typeof page !== "number") {
+        CustomError.createCustomError({
+            name: ErrorsName.PRODUCT_DATA_INCORRECT_TYPE,
+            cause: ErrorsCause.PRODUCT_DATA_INCORRECT_TYPE,
+            message: ErrorsMessage.PRODUCT_DATA_INCORRECT_TYPE,
+        });}
+
     try {
         let userName = req.user.first_name;
-        let user = req.user
-        let products = await getProductsService(limit, page, sort, category, user)
-        res.render("products", { products, userName });
+        let user = req.user;
+        let products = await getProductsService(limit, page, sort, category, user); 
+        res.json({ response: products });
     } catch (error) {
-        console.log("error");
+        console.log("Error desde el controller: ", error);
     }
-}
+};
 
 export const getProductByIdController = async (req, res) => {
     try {
-        const product = await getProductByIdService(req.params.pid);
-        res.json({ mensage: "Producto encontrado por id", producto: product });
+        let id = req.params.pid;
+        const product = await getProductByIdService(id);
+        res.json({ response: product });
     } catch (error) {
-        console.log("error");
+        console.log("Error desde el controller", error);
+        return error;
     }
-}
+};
 
 export const addProductController = async (req, res) => {
     try {
         let newProduct = req.body;
         const newProductCreated = await addProductService(newProduct);
-        res.json({
-            mensage: "Producto creado con éxito",
-            producto: newProductCreated,
-        });
+        res.json({ response: newProductCreated });
     } catch (error) {
-        console.log("error");
+        console.log("Error desde el controller: ", error);
     }
 };
 
@@ -46,11 +59,10 @@ export const updateProductController = async (req, res) => {
         const newProduct = req.body;
         const updatedProduct = await updateProductService(pid, newProduct);
         res.json({
-            mensaje: "Producto actualizado con éxito",
-            producto: updatedProduct,
+            reponse: updatedProduct,
         });
     } catch (error) {
-        console.log("error");
+        console.log("Error desde el controller: ", error);
     }
 };
 
@@ -59,10 +71,18 @@ export const deleteProductController = async (req, res) => {
         const pid = req.params.pid;
         const deletedProduct = await deleteProductService(pid);
         res.json({
-            mensaje: "Producto borrado con éxito",
-            producto: deletedProduct,
+            response: deletedProduct,
         });
     } catch (error) {
-        console.log("error");
+        console.log("Error desde el controller: ", error);
     }
-}
+};
+
+export const mockedProductsController = async (req, res) => {
+    try {
+        const products = await mockedProductsService();
+        res.json({ response: products });
+    } catch (error) {
+        console.log("Error desde el controller: ", error);
+    }
+};

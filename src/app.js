@@ -8,6 +8,7 @@ import MongoStore from "connect-mongo";
 import path from "path"
 import passport from "passport";
 import config from "./config.js";
+import { errorMiddleware } from './utils/errors/errorsMiddleware.js'
 
 
 
@@ -53,7 +54,7 @@ app.use(
             collectionName: 'sessions'
         }),
         cookie: {
-            maxAge: 1000 * 60 * 60 * 24
+            maxAge: 1000 * 60 * 60 * 24,
         }
     })
 )
@@ -71,6 +72,7 @@ app.use('/chat', chatRouter)
 app.use("/views", viewsRouter)
 app.use('/jwt', jwtRouter)
 
+app.use(errorMiddleware) 
 
 const PORT = config.PORT
 const httpServer = app.listen(PORT, () => {

@@ -3,7 +3,8 @@ import {
     getProductById, 
     addProduct, 
     deleteProduct, 
-    updateProduct
+    updateProduct,
+    mockedProducts
 } from '../persistencia/products.persistence.js'
 
 export async function getProductsService(limit, page, sort, category, user){
@@ -29,4 +30,9 @@ export async function deleteProductService(id){
 export async function updateProductService(id, newProduct){
     const editedProduct = await updateProduct(id, newProduct)
     return editedProduct
+}
+
+export async function mockedProductsService(){
+    const products = await mockedProducts()
+    return products
 }

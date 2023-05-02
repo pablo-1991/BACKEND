@@ -1,16 +1,51 @@
+import CustomError from "../../../utils/errors/CustomError.js";
+import {
+    ErrorsCause,
+    ErrorsMessage,
+    ErrorsName,
+} from "../../../utils/errors/ErrorsEnum.js";
 import { cartsModel } from "../../mongodb/models/carts.model.js";
 import { productsModel } from "../../mongodb/models/products.model.js";
 import { ticketsModel } from "../../mongodb/models/tickets.model.js";
 
 export default class CartManager {
     async addCart(cart) {
-        console.log(cart);
-        let newCartFromUuser = { products: cart };
         try {
+            for (let i = 0; i < cart.length; i++) {
+                if (!cart[i].quantity || !cart[i].id) {
+                    CustomError.createCustomError({
+                        name: ErrorsName.CART_DATA_INCOMPLETE,
+                        cause: ErrorsCause.CART_DATA_INCOMPLETE,
+                        message: ErrorsMessage.CART_DATA_INCOMPLETE,
+                    });
+                    return;
+                }
+
+                if (cart[i].id.length != 24) {
+                    CustomError.createCustomError({
+                        name: ErrorsName.PRODUCT_DATA_INCORRECT_ID,
+                        cause: ErrorsCause.PRODUCT_DATA_INCORRECT_ID,
+                        message: ErrorsMessage.PRODUCT_DATA_INCORRECT_ID,
+                    });
+                    return;
+                }
+                let exitsProduct = await productsModel.findById(cart[i].id);
+                if (exitsProduct === null) {
+                    CustomError.createCustomError({
+                        name: ErrorsName.PRODUCT_DATA_NOT_FOUND_IN_DATABASE,
+                        cause: ErrorsCause.PRODUCT_DATA_NOT_FOUND_IN_DATABASE,
+                        message: ErrorsMessage.PRODUCT_DATA_NOT_FOUND_IN_DATABASE,
+                    });
+                    return;
+                }
+            }
+
+            let newCartFromUuser = { products: cart };
+
             const newCart = await cartsModel.create(newCartFromUuser);
-            return newCart;
+            return { message: "Carrito creado con éxito", cart: newCart };
         } catch (error) {
-            console.log(error);
+            console.log("Error desde el manager", error);
             return error;
         }
     }
@@ -20,51 +55,123 @@ export default class CartManager {
             const carts = await cartsModel.find().lean();
             return carts;
         } catch (error) {
-            console.log(error);
+            console.log("Error desde el manager", error);
             return error;
         }
     }
 
     async getCartById(cid) {
         try {
+            if (cid.length !== 24) {
+                CustomError.createCustomError({
+                    name: ErrorsName.CART_DATA_INCORRECT_ID,
+                    cause: ErrorsCause.CART_DATA_INCORRECT_ID,
+                    message: ErrorsMessage.CART_DATA_INCORRECT_ID,
+                });
+                return;
+            }
+
+            const existCart = await cartsModel.findById(cid);
+
+            if (!existCart) {
+                CustomError.createCustomError({
+                    name: ErrorsName.CART_DATA_NOT_FOUND_IN_DATABASE,
+                    cause: ErrorsCause.CART_DATA_NOT_FOUND_IN_DATABASE,
+                    message: ErrorsMessage.CART_DATA_NOT_FOUND_IN_DATABASE,
+                });
+                return;
+            }
+
             const cart = await cartsModel
                 .findById(cid)
                 .populate({ path: "products.id" })
                 .lean();
-            console.log(cart);
+
             return cart;
         } catch (error) {
-            console.log(error);
+            console.log("Error desde el manager", error);
             return error;
         }
     }
 
     async addProductToCart(cid, pid) {
         try {
+            if (cid.length != 24 || pid.length != 24) {
+                CustomError.createCustomError({
+                    name: ErrorsName.CART_DATA_INCORRECT_ID,
+                    cause: ErrorsCause.CART_DATA_INCORRECT_ID,
+                    message: ErrorsMessage.CART_DATA_INCORRECT_ID,
+                });
+                return;
+            }
+
             const cart = await cartsModel.findOne({ _id: cid });
-            if (!cart) return console.log("carrito no encontrado");
-            console.log("aca", cart);
+            const existsProduct = await productsModel.findById(pid);
+            if (!cart) {
+                CustomError.createCustomError({
+                    name: ErrorsName.CART_DATA_NOT_FOUND_IN_DATABASE,
+                    cause: ErrorsCause.CART_DATA_NOT_FOUND_IN_DATABASE,
+                    message: ErrorsMessage.CART_DATA_NOT_FOUND_IN_DATABASE,
+                });
+                return;
+            }
+
+            if (!existsProduct) {
+                CustomError.createCustomError({
+                    name: ErrorsName.PRODUCT_DATA_NOT_FOUND_IN_DATABASE,
+                    cause: ErrorsCause.PRODUCT_DATA_NOT_FOUND_IN_DATABASE,
+                    message: ErrorsMessage.PRODUCT_DATA_NOT_FOUND_IN_DATABASE,
+                });
+                return;
+            }
+
             if (cart.products.findIndex((el) => el.id == pid) !== -1) {
-                console.log("en if");
                 cart.products[
                     cart.products.findIndex((el) => el.id == pid)
                 ].quantity += 1;
-                console.log("nuevo", cart);
             } else {
                 cart.products.push({ id: pid, quantity: 1 });
             }
+
             await cart.save();
+
             return cart;
         } catch (error) {
-            console.log(error);
+            console.log("Error desde el manager", error);
             return error;
         }
     }
 
     async deleteProductFromCart(cid, pid) {
         try {
+            if (cid.length != 24 || pid.length != 24) {
+                CustomError.createCustomError({
+                    name: ErrorsName.CART_DATA_INCORRECT_ID,
+                    cause: ErrorsCause.CART_DATA_INCORRECT_ID,
+                    message: ErrorsMessage.CART_DATA_INCORRECT_ID,
+                });
+                return;
+            }
+
             const cart = await cartsModel.findOne({ _id: cid });
-            if (!cart) return console.log("carrito no encontrado");
+            if (!cart) {
+                CustomError.createCustomError({
+                    name: ErrorsName.CART_DATA_NOT_FOUND_IN_DATABASE,
+                    cause: ErrorsCause.CART_DATA_NOT_FOUND_IN_DATABASE,
+                    message: ErrorsMessage.CART_DATA_NOT_FOUND_IN_DATABASE,
+                });
+                return;
+            }
+            const existsProduct = await productsModel.findById(pid);
+            if (!existsProduct) {
+                CustomError.createCustomError({
+                    name: ErrorsName.PRODUCT_DATA_NOT_FOUND_IN_DATABASE,
+                    cause: ErrorsCause.PRODUCT_DATA_NOT_FOUND_IN_DATABASE,
+                    message: ErrorsMessage.PRODUCT_DATA_NOT_FOUND_IN_DATABASE,
+                });
+                return;
+            }
+
             let productIndex = cart.products.findIndex((el) => el.id == pid);
             if (cart.products[productIndex].quantity > 1) {
                 cart.products[productIndex].quantity -= 1;
@@ -72,48 +179,139 @@ export default class CartManager {
                 cart.products.splice(productIndex, 1);
             }
             await cart.save();
-            return cart;
+            return { message: "Product deleted from cart successfully", cart };
         } catch (error) {
-            console.log(error);
+            console.log("Error desde el manager", error);
+            return error;
         }
     }
 
     async emptyCart(cid) {
         try {
+            if (cid.length != 24) {
+                CustomError.createCustomError({
+                    name: ErrorsName.CART_DATA_INCORRECT_ID,
+                    cause: ErrorsCause.CART_DATA_INCORRECT_ID,
+                    message: ErrorsMessage.CART_DATA_INCORRECT_ID,
+                });
+                return;
+            }
             const cart = await cartsModel.findOne({ _id: cid });
-            if (!cart) return console.log("carrito no encontrado");
+            if (!cart) {
+                CustomError.createCustomError({
+                    name: ErrorsName.CART_DATA_NOT_FOUND_IN_DATABASE,
+                    cause: ErrorsCause.CART_DATA_NOT_FOUND_IN_DATABASE,
+                    message: ErrorsMessage.CART_DATA_NOT_FOUND_IN_DATABASE,
+                });
+                return;
+            }
             cart.products = [];
             await cart.save();
-            return cart.products;
+            return { message: "Cart emptied successfully", cart };
         } catch (error) {
-            console.log(error);
+            console.log("Error desde el manager", error);
+            return error;
         }
     }
 
     async editProductQty(cid, pid, quantity) {
         try {
+            if (cid.length != 24 || pid.length != 24) {
+                CustomError.createCustomError({
+                    name: ErrorsName.CART_DATA_INCORRECT_ID,
+                    cause: ErrorsCause.CART_DATA_INCORRECT_ID,
+                    message: ErrorsMessage.CART_DATA_INCORRECT_ID,
+                });
+                return;
+            }
+
+            if (!cid || !pid || !quantity) {
+                CustomError.createCustomError({
+                    name: ErrorsName.CART_DATA_INCOMPLETE,
+                    cause: ErrorsCause.CART_DATA_INCOMPLETE,
+                    message: ErrorsMessage.CART_DATA_INCOMPLETE,
+                });
+                return;
+            }
+
             const cart = await cartsModel.findOne({ _id: cid });
-            if (!cart) return console.log("carrito no encontrado");
-            console.log(cart);
+            if (!cart) {
+                CustomError.createCustomError({
+                    name: ErrorsName.CART_DATA_NOT_FOUND_IN_DATABASE,
+                    cause: ErrorsCause.CART_DATA_NOT_FOUND_IN_DATABASE,
+                    message: ErrorsMessage.CART_DATA_NOT_FOUND_IN_DATABASE,
+                });
+                return;
+            }
+            const existsProduct = await productsModel.findById(pid);
+            if (!existsProduct) {
+                CustomError.createCustomError({
+                    name: ErrorsName.PRODUCT_DATA_NOT_FOUND_IN_DATABASE,
+                    cause: ErrorsCause.PRODUCT_DATA_NOT_FOUND_IN_DATABASE,
+                    message: ErrorsMessage.PRODUCT_DATA_NOT_FOUND_IN_DATABASE,
+                });
+                return;
+            }
             let productIndex = cart.products.findIndex((el) => el.id == pid);
-            console.log(productIndex);
             cart.products[productIndex].quantity = quantity;
             await cart.save();
-            return cart.products[productIndex];
+            return { message: "Quantity edited successfuly", product: cart };
         } catch (error) {
-            console.log(error);
+            console.log("Error desde el manager", error);
+            return error;
         }
     }
 
     async editCart(cid, newCart) {
         try {
+            if (cid.length != 24) {
+                CustomError.createCustomError({
+                    name: ErrorsName.CART_DATA_INCORRECT_ID,
+                    cause: ErrorsCause.CART_DATA_INCORRECT_ID,
+                    message: ErrorsMessage.CART_DATA_INCORRECT_ID,
+                });
+                return;
+            }
+            if (!newCart.quantity) {
+                CustomError.createCustomError({
+                    name: ErrorsName.CART_DATA_INCOMPLETE,
+                    cause: ErrorsCause.CART_DATA_INCOMPLETE,
+                    message: ErrorsMessage.CART_DATA_INCOMPLETE,
+                });
+                return;
+            }
+            if (newCart.id.length != 24) {
+                CustomError.createCustomError({
+                    name: ErrorsName.CART_DATA_INCORRECT_ID,
+                    cause: ErrorsCause.CART_DATA_INCORRECT_ID,
+                    message: ErrorsMessage.CART_DATA_INCORRECT_ID,
+                });
+                return;
+            }
             const cart = await cartsModel.findOne({ _id: cid });
-            if (!cart) return console.log("carrito no encontrado");
+            if (!cart) {
+                CustomError.createCustomError({
+                    name: ErrorsName.CART_DATA_NOT_FOUND_IN_DATABASE,
+                    cause: ErrorsCause.CART_DATA_NOT_FOUND_IN_DATABASE,
+                    message: ErrorsMessage.CART_DATA_NOT_FOUND_IN_DATABASE,
+                });
+                return;
+            }
+            const existsProduct = await productsModel.findById(newCart.id);
+            if (!existsProduct) {
+                CustomError.createCustomError({
+                    name: ErrorsName.PRODUCT_DATA_NOT_FOUND_IN_DATABASE,
+                    cause: ErrorsCause.PRODUCT_DATA_NOT_FOUND_IN_DATABASE,
+                    message: ErrorsMessage.PRODUCT_DATA_NOT_FOUND_IN_DATABASE,
+                });
+                return;
+            }
             cart.products = newCart;
             await cart.save();
-            return cart.products;
+            return { message: "Cart updated successfully", cart };
         } catch (error) {
-            console.log(error);
+            console.log("Error desde el manager", error);
+            return error;
         }
     }
 
@@ -124,50 +322,77 @@ export default class CartManager {
         let product;
         let cart;
         let el;
-        let newProductsInCart = []
+        let newProductsInCart = [];
         try {
+            if (cid.length != 24) {
+                CustomError.createCustomError({
+                    name: ErrorsName.CART_DATA_INCORRECT_ID,
+                    cause: ErrorsCause.CART_DATA_INCORRECT_ID,
+                    message: ErrorsMessage.CART_DATA_INCORRECT_ID,
+                });
+                return;
+            }
+
+            if (!userFulllName) {
+                CustomError.createCustomError({
+                    name: ErrorsName.USER_DATA_INCOMPLETE,
+                    cause: ErrorsCause.USER_DATA_INCOMPLETE,
+                    message: ErrorsMessage.USER_DATA_INCOMPLETE,
+                });
+                return;
+            }
             cart = await cartsModel.findOne({ _id: cid });
-            console.log('cart', cart)
-            let iterations = cart.products.length
 
+            if (!cart) {
+                CustomError.createCustomError({
+                    name: ErrorsName.CART_DATA_NOT_FOUND_IN_DATABASE,
+                    cause: ErrorsCause.CART_DATA_NOT_FOUND_IN_DATABASE,
+                    message: ErrorsMessage.CART_DATA_NOT_FOUND_IN_DATABASE,
+                });
+                return;
+            }
+            let iterations = cart.products.length;
             for (let index = 0; index < iterations; index++) {
-                console.log('cart dentro del for', cart)
                 el = cart.products[index];
-                console.log('el', el)
-                console.log("entra al for", index + 1);
                 product = await productsModel.findOne({ _id: el.id });
-
                 if (el.quantity <= product.stock) {
-                    console.log("pasa x if", index + 1);
                     //modifica el stock de productos
                     product.stock = product.stock - el.quantity;
                     //para calcular total
                     let subtotal = product.price * el.quantity;
                     unitPrices = [...unitPrices, subtotal];
                     await product.save();
-
                 } else {
-                    newProductsInCart.push(el)
+                    newProductsInCart.push(el);
                     productsWithoutEnoughStock.push(el.id);
-                    console.log(`cantidad de stock insuficiente del producto ${product}`);
                 }
             }
-
-            cart.products = newProductsInCart
-            console.log('cart al final', cart)
+            cart.products = newProductsInCart;
             await cart.save();
-            const tickets = await ticketsModel.find();
-            let code = parseInt(tickets[tickets.length - 1].code) + 1;
-            ticket = await ticketsModel.create({
-                code: `${code}`,
-                purchase_datetime: new Date().toLocaleString(),
-                amount: unitPrices.reduce((acc, el) => acc + el, 0),
-                purchaser: userFulllName,
-            });
-            console.log("ticket del manager", ticket);
-            return { ticket, productsWithoutEnoughStock };
+            if (unitPrices.length > 0) {
+                const tickets = await ticketsModel.find();
+                let code = parseInt(tickets[tickets.length - 1].code) + 1;
+                ticket = await ticketsModel.create({
+                    code: `${code}`,
+                    purchase_datetime: new Date().toLocaleString(),
+                    amount: unitPrices.reduce((acc, el) => acc + el, 0),
+                    purchaser: userFulllName,
+                });
+                return {
+                    message: "Compra realizada con éxito",
+                    ticket,
+                    new_cart: cart,
+                    products_not_bought: productsWithoutEnoughStock,
+                };
+            } else {
+                return {
+                    message:
+                        "No se pudo realizar la compra porque la cantidad de productos supera el stock.",
+                };
+            }
         } catch (error) {
-            console.log(error);
+            console.log("Error desde el manager", error);
+            return error;
         }
     }
 }
