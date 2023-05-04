@@ -57,4 +57,4 @@
 
 
  -Mock:
-- '/products/mockingproducts' mock de productos <br>
+- '/products/mockingproducts/products' mock de productos <br>
