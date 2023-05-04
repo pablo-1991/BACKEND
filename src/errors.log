@@ -1,0 +1,26 @@
+
+{
+  message: "PRODUCTOS ENCONTRADOS!",
+  level: 'info',
+  timestamp: '2023-05-03T20:23:31.803Z'
+}
+{
+  message: 'info',
+  level: 'info',
+  timestamp: '2023-05-03T20:24:42.108Z'
+}
+{
+  message: 'fatal',
+  level: 'fatal',
+  timestamp: '2023-05-03T20:24:42.105Z'
+}
+{
+  message: 'error',
+  level: 'error',
+  timestamp: '2023-05-03T20:24:42.106Z'
+}
+{
+  message: 'warn',
+  level: 'warn',
+  timestamp: '2023-05-03T20:24:42.108Z'
+}

@@ -4,6 +4,7 @@ import {
     ErrorsMessage,
     ErrorsName,
 } from "../../../utils/errors/ErrorsEnum.js";
+import logger from "../../../utils/winston.js";
 import { cartsModel } from "../../mongodb/models/carts.model.js";
 import { productsModel } from "../../mongodb/models/products.model.js";
 import { ticketsModel } from "../../mongodb/models/tickets.model.js";
@@ -18,6 +19,7 @@ export default class CartManager {
                         cause: ErrorsCause.CART_DATA_INCOMPLETE,
                         message: ErrorsMessage.CART_DATA_INCOMPLETE,
                     });
+                    logger.warn('DATOS DEL CART INCOMPLETOS')
                     return;
                 }
 
@@ -36,16 +38,17 @@ export default class CartManager {
                         cause: ErrorsCause.PRODUCT_DATA_NOT_FOUND_IN_DATABASE,
                         message: ErrorsMessage.PRODUCT_DATA_NOT_FOUND_IN_DATABASE,
                     });
+                    logger.warn('PRODUCTO NO EXISTE EN DB')
                     return;
                 }
             }
 
             let newCartFromUuser = { products: cart };
-
+            logger.info("CART CREADO CON ÉXITO!")
             const newCart = await cartsModel.create(newCartFromUuser);
             return { message: "Carrito creado con éxito", cart: newCart };
         } catch (error) {
-            console.log("Error desde el manager", error);
+            logger.error("Error desde el manager", error);
             return error;
         }
     }
@@ -53,9 +56,10 @@ export default class CartManager {
     async getCarts() {
         try {
             const carts = await cartsModel.find().lean();
+            logger.info('CARTS OBTENIDOS CON ÉXITO!')
             return carts;
         } catch (error) {
-            console.log("Error desde el manager", error);
+            logger.error("Error desde el manager", error);
             return error;
         }
     }
@@ -79,6 +83,7 @@ export default class CartManager {
                     cause: ErrorsCause.CART_DATA_NOT_FOUND_IN_DATABASE,
                     message: ErrorsMessage.CART_DATA_NOT_FOUND_IN_DATABASE,
                 });
+                logger.warn("CART NO ENCONTRADO!")
                 return;
             }
 
@@ -87,9 +92,10 @@ export default class CartManager {
                 .populate({ path: "products.id" })
                 .lean();
 
+            logger.info('CART OBTENIDO CON ÉXITO!')
             return cart;
         } catch (error) {
-            console.log("Error desde el manager", error);
+            logger.error("Error desde el manager", error);
             return error;
         }
     }
@@ -113,6 +119,7 @@ export default class CartManager {
                     cause: ErrorsCause.CART_DATA_NOT_FOUND_IN_DATABASE,
                     message: ErrorsMessage.CART_DATA_NOT_FOUND_IN_DATABASE,
                 });
+                logger.warn("CART NO ENCONTRADO!")
                 return;
             }
 
@@ -122,6 +129,7 @@ export default class CartManager {
                     cause: ErrorsCause.PRODUCT_DATA_NOT_FOUND_IN_DATABASE,
                     message: ErrorsMessage.PRODUCT_DATA_NOT_FOUND_IN_DATABASE,
                 });
+                logger.warn("PRODUCTO NO ENCONTRADO!")
                 return;
             }
 
@@ -135,9 +143,10 @@ export default class CartManager {
 
             await cart.save();
 
+            logger.info("PRODUCTO AGREGADO AL CART")
             return cart;
         } catch (error) {
-            console.log("Error desde el manager", error);
+            logger.error("Error desde el manager", error);
             return error;
         }
     }
@@ -160,6 +169,7 @@ export default class CartManager {
                     cause: ErrorsCause.CART_DATA_NOT_FOUND_IN_DATABASE,
                     message: ErrorsMessage.CART_DATA_NOT_FOUND_IN_DATABASE,
                 });
+                logger.warn("CART NO ENCONTRADO")
                 return;
             }
             const existsProduct = await productsModel.findById(pid);
@@ -169,6 +179,7 @@ export default class CartManager {
                     cause: ErrorsCause.PRODUCT_DATA_NOT_FOUND_IN_DATABASE,
                     message: ErrorsMessage.PRODUCT_DATA_NOT_FOUND_IN_DATABASE,
                 });
+                logger.warn("PRODUCTO NO ENCONTRADO!")
                 return;
             }
 
@@ -179,9 +190,10 @@ export default class CartManager {
                 cart.products.splice(productIndex, 1);
             }
             await cart.save();
+            logger.info("CART ACTUALIZADO CON ÉXITO")
             return { message: "Product deleted from cart successfully", cart };
         } catch (error) {
-            console.log("Error desde el manager", error);
+            logger.error("Error desde el manager", error);
             return error;
         }
     }
@@ -203,13 +215,16 @@ export default class CartManager {
                     cause: ErrorsCause.CART_DATA_NOT_FOUND_IN_DATABASE,
                     message: ErrorsMessage.CART_DATA_NOT_FOUND_IN_DATABASE,
                 });
+                logger.warn("CART NO ENCONTRADO")
                 return;
             }
             cart.products = [];
+
+            logger.info("SE VACIÓ CART CON ÉXITO!")
             await cart.save();
             return { message: "Cart emptied successfully", cart };
         } catch (error) {
-            console.log("Error desde el manager", error);
+            logger.error("Error desde el manager", error);
             return error;
         }
     }
@@ -231,6 +246,7 @@ export default class CartManager {
                     cause: ErrorsCause.CART_DATA_INCOMPLETE,
                     message: ErrorsMessage.CART_DATA_INCOMPLETE,
                 });
+                logger.warn("FALTAN INGRESAR DATOS")
                 return;
             }
 
@@ -241,6 +257,7 @@ export default class CartManager {
                     cause: ErrorsCause.CART_DATA_NOT_FOUND_IN_DATABASE,
                     message: ErrorsMessage.CART_DATA_NOT_FOUND_IN_DATABASE,
                 });
+                logger.warn("CART NO ENCONTRADO")
                 return;
             }
             const existsProduct = await productsModel.findById(pid);
@@ -250,14 +267,17 @@ export default class CartManager {
                     cause: ErrorsCause.PRODUCT_DATA_NOT_FOUND_IN_DATABASE,
                     message: ErrorsMessage.PRODUCT_DATA_NOT_FOUND_IN_DATABASE,
                 });
+                logger.warn("PRODUCTO NO ENCONTRADO")
                 return;
             }
             let productIndex = cart.products.findIndex((el) => el.id == pid);
             cart.products[productIndex].quantity = quantity;
+
             await cart.save();
+            logger.info("CANTIDAD DEL PRODUCTO ACTUALIZADO")
             return { message: "Quantity edited successfuly", product: cart };
         } catch (error) {
-            console.log("Error desde el manager", error);
+            logger.error("Error desde el manager", error);
             return error;
         }
     }
@@ -278,6 +298,7 @@ export default class CartManager {
                     cause: ErrorsCause.CART_DATA_INCOMPLETE,
                     message: ErrorsMessage.CART_DATA_INCOMPLETE,
                 });
+                logger.warn("FALTAN INGRESAR DATOS")
                 return;
             }
             if (newCart.id.length != 24) {
@@ -295,6 +316,7 @@ export default class CartManager {
                     cause: ErrorsCause.CART_DATA_NOT_FOUND_IN_DATABASE,
                     message: ErrorsMessage.CART_DATA_NOT_FOUND_IN_DATABASE,
                 });
+                logger.warn("CART NO ENCONTRADO")
                 return;
             }
             const existsProduct = await productsModel.findById(newCart.id);
@@ -304,13 +326,15 @@ export default class CartManager {
                     cause: ErrorsCause.PRODUCT_DATA_NOT_FOUND_IN_DATABASE,
                     message: ErrorsMessage.PRODUCT_DATA_NOT_FOUND_IN_DATABASE,
                 });
+                logger.warn("PRODUCTO NO ENCONTRADO")
                 return;
             }
             cart.products = newCart;
             await cart.save();
+            logger.info("CART ACTUALIZADO")
             return { message: "Cart updated successfully", cart };
         } catch (error) {
-            console.log("Error desde el manager", error);
+            logger.error("Error desde el manager", error);
             return error;
         }
     }
@@ -349,6 +373,7 @@ export default class CartManager {
                     cause: ErrorsCause.CART_DATA_NOT_FOUND_IN_DATABASE,
                     message: ErrorsMessage.CART_DATA_NOT_FOUND_IN_DATABASE,
                 });
+                logger.warn("CART NO ENCONTRADO")
                 return;
             }
             let iterations = cart.products.length;
@@ -369,6 +394,9 @@ export default class CartManager {
             }
             cart.products = newProductsInCart;
             await cart.save();
+
+            logger.info("CART ACTUALIZADO")
+
             if (unitPrices.length > 0) {
                 const tickets = await ticketsModel.find();
                 let code = parseInt(tickets[tickets.length - 1].code) + 1;
@@ -378,6 +406,8 @@ export default class CartManager {
                     amount: unitPrices.reduce((acc, el) => acc + el, 0),
                     purchaser: userFulllName,
                 });
+
+                logger.info("COMPRA REALIZADA CON ÉXITO!")
                 return {
                     message: "Compra realizada con éxito",
                     ticket,
@@ -385,13 +415,14 @@ export default class CartManager {
                     products_not_bought: productsWithoutEnoughStock,
                 };
             } else {
+                logger.warn("NO SE PUDO REALIZAR COMPRA, SE SUPERA EL STOCK!")
                 return {
                     message:
                         "No se pudo realizar la compra porque la cantidad de productos supera el stock.",
                 };
             }
         } catch (error) {
-            console.log("Error desde el manager", error);
+            logger.error("Error desde el manager", error);
             return error;
         }
     }

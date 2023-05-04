@@ -9,6 +9,7 @@ import path from "path"
 import passport from "passport";
 import config from "./config.js";
 import { errorMiddleware } from './utils/errors/errorsMiddleware.js'
+import { createLog } from './middlewares/winston.middleware.js'
 
 
 
@@ -27,6 +28,7 @@ import usersRouter from "./routes/users.router.js"
 import viewsRouter from "./routes/views/views.router.js"
 import chatRouter from './routes/views/messages.router.js'
 import jwtRouter from "./routes/jwt.router.js"
+import loggerTestRouter from './routes/loggerTest.router.js'
 
 
 app.use(express.json())
@@ -71,8 +73,13 @@ app.use("/users", usersRouter)
 app.use('/chat', chatRouter)
 app.use("/views", viewsRouter)
 app.use('/jwt', jwtRouter)
+app.use('/loggerTest', loggerTestRouter)
 
+//faker
 app.use(errorMiddleware) 
+
+//logger
+app.use(createLog)
 
 const PORT = config.PORT
 const httpServer = app.listen(PORT, () => {

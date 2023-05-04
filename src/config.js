@@ -10,4 +10,5 @@ export default {
     TWILIO_PHONE_NUMBER: process.env.TWILIO_PHONE_NUMBER,
     TWILIO_SID: process.env.TWILIO_SID,
     TWILIO_AUTH_TOKEN: process.env.TWILIO_AUTH_TOKEN,
+    NODE_ENV: process.env.NODE_ENV,
 }

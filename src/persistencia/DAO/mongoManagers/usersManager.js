@@ -1,15 +1,17 @@
 import { userModel } from "../../mongodb/models/users.model.js";
 import { hashPassword, comparePasswords } from "../../../utils.js";
 import config from "../../../config.js";
-
 import UsersRepository from "../../repositories/users.repositories.js";
 import { faker } from "@faker-js/faker";
 import CustomError from "../../../utils/errors/CustomError.js";
+import logger from "../../../utils/winston.js";
 import {
     ErrorsCause,
     ErrorsMessage,
     ErrorsName,
 } from "../../../utils/errors/ErrorsEnum.js";
+
+
 
 export default class UsersManager {
     async createUser(user) {
@@ -36,7 +38,7 @@ export default class UsersManager {
                 return null;
             }
         } catch (error) {
-            console.log(error);
+            logger.error("ERROR", error);
             throw new Error(error);
         }
     }
