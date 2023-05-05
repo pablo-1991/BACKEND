@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 
 const ticketsSchema = new mongoose.Schema({
 code: {
-    type: String,
+    type: Number,
     unique: true
 },
 purchase_datetime :{

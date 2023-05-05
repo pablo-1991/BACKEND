@@ -23,7 +23,7 @@ export const getProductsController = async (req, res) => {
         });}
 
     try {
-        let userName = req.user.first_name;
+        let userName = req.user
         let user = req.user;
         let products = await getProductsService(limit, page, sort, category, user); 
         res.json({ response: products });

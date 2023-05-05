@@ -46,7 +46,7 @@ router.post(
     '/login',
     passport.authenticate('login', {
         failureRedirect: '/views/errorLogin',
-        successRedirect: '/products',
+        //successRedirect: '/views/login',
         passReqToCallback: true,
     })
 )
