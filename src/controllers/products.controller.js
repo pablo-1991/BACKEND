@@ -14,7 +14,7 @@ import {
 } from "../utils/errors/ErrorsEnum.js";
 
 export const getProductsController = async (req, res) => {
-    const { limit = 10, page = 1, sort, category } = req.query;
+    const { limit = 50, page = 1, sort, category } = req.query;
     if (typeof limit !== "number" || typeof page !== "number") {
         CustomError.createCustomError({
             name: ErrorsName.PRODUCT_DATA_INCORRECT_TYPE,

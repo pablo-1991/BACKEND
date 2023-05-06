@@ -5,6 +5,7 @@ import { Strategy as GithubStrategy } from "passport-github2";
 import { hashPassword, comparePasswords } from "../utils.js";
 import UsersDBDTO from "../persistencia/DTO/usersDB.dto.js";
 import config from "../config.js";
+import logger from "../utils/winston.js";
 
 passport.use(
     "registro",
@@ -34,7 +35,8 @@ passport.use(
                     role: userRole,
                 };
                 const newuserBD = await userModel.create(newUser);
-                done(null, newuserBD);
+                done(null, newuserBD)
+                logger.info("USUARIO CREADO CON ÉXITO!");
             } catch (error) {
                 done(error);
             }

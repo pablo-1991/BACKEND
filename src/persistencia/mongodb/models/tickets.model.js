@@ -7,10 +7,10 @@ code: {
     unique: true
 },
 purchase_datetime :{
-    type: String
+    type: String,
 },
 amount: {
-    type: Number
+    type: Number,
 },
 purchaser: {
     type: String, 

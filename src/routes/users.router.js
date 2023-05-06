@@ -39,17 +39,16 @@ router.post("/registro",
         failureRedirect: '/views/errorRegistro',
         successRedirect: '/products',
         passReqToCallback: true,
-    })
-)
+    }))
 
 router.post(
     '/login',
     passport.authenticate('login', {
         failureRedirect: '/views/errorLogin',
-        //successRedirect: '/views/login',
+        successRedirect: '/products',
         passReqToCallback: true,
-    })
-)
+    }))
+
 
 router.get("/logout", async (req, res) => {
     req.session.destroy(error => {

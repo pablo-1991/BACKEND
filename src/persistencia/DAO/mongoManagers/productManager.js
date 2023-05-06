@@ -219,9 +219,8 @@ export default class ProductManager {
     async mockedProducts() {
         try {
             const products = [];
-            for (let i = 0; i < 4; i++) {
+            for (let i = 0; i < 50; i++) {
                 const product = await productsModel.create({
-
 
                     title: faker.commerce.product(),
                     price: faker.commerce.price(),
@@ -234,7 +233,7 @@ export default class ProductManager {
                 });
 
                 products.push(product);
-                // product.save();
+                //product.save();
             }
             console.log(products)
             return { message: 'Productos creados con éxito', products };

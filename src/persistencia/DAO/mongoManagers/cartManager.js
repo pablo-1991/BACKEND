@@ -400,8 +400,8 @@ export default class CartManager {
             if (unitPrices.length > 0) {
                 const tickets = await ticketsModel.find();
                 let code= 10000
-                if (tickets.length) {code = tickets[tickets.lenght - 1]; 
-                code + 1}
+                if (tickets.length) {code = tickets[tickets.length - 1].code;
+                code += 1 }
                         
                 ticket = await ticketsModel.create({
                     code: `${code}`,
