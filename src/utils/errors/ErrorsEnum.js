@@ -17,7 +17,10 @@ export const ErrorsName = {
 
     PRODUCT_DATA_CODE_ALREADY_EXISTS_IN_DATABASE: 'Error products',
 
-    PRODUCT_DATA_NOT_ENOUGH_STOCK: 'Error products'
+    PRODUCT_DATA_NOT_ENOUGH_STOCK: 'Error products',
+    
+    USER_DATA_INCORRECT_TOKEN: 'Error user',
+    USER_DATA_NOT_ALLOWED: 'Error user'
 
 }
 
@@ -40,7 +43,9 @@ export const ErrorsMessage = {
 
     PRODUCT_DATA_CODE_ALREADY_EXISTS_IN_DATABASE: 'Request failed. This product already exists in database. Please change the product code.',
 
-    PRODUCT_DATA_NOT_ENOUGH_STOCK: 'Request failed. This product has not enough stock.'
+    PRODUCT_DATA_NOT_ENOUGH_STOCK: 'Request failed. This product has not enough stock.',
+    USER_DATA_INCORRECT_TOKEN: 'Request failed. Incorrect or expired token',
+    USER_DATA_NOT_ALLOWED: 'Request failed. You do not have permissions for this operation.'
 }
 
 export const ErrorsCause = {
@@ -62,5 +67,7 @@ export const ErrorsCause = {
 
     PRODUCT_DATA_CODE_ALREADY_EXISTS_IN_DATABASE: 'Request failed. Product code already exists in database.',
 
-    PRODUCT_DATA_NOT_ENOUGH_STOCK: 'Request failed. Not enough product\'s stock.'
+    PRODUCT_DATA_NOT_ENOUGH_STOCK: 'Request failed. Not enough product\'s stock.',
+    USER_DATA_INCORRECT_TOKEN: 'Request failed. Expired token',
+    USER_DATA_NOT_ALLOWED: 'Request failed. Missing permissions.'
 }

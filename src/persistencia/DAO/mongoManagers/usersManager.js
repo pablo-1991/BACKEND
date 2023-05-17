@@ -4,13 +4,14 @@ import config from "../../../config.js";
 import UsersRepository from "../../repositories/users.repositories.js";
 import { faker } from "@faker-js/faker";
 import CustomError from "../../../utils/errors/CustomError.js";
+import jwt from "jsonwebtoken";
+import nodemailer from 'nodemailer';
 import logger from "../../../utils/winston.js";
 import {
     ErrorsCause,
     ErrorsMessage,
     ErrorsName,
 } from "../../../utils/errors/ErrorsEnum.js";
-
 
 
 export default class UsersManager {
@@ -69,4 +70,117 @@ export default class UsersManager {
             return null;
         }
     }
-}
+
+    async forgotPassword(email) {
+        try {
+            let user = await userModel.find({ email });
+            if (!user) {
+                return CustomError.createCustomError({
+                    name: ErrorsName.USER_DATA_NOT_FOUND_IN_DATABASE,
+                    cause: ErrorsCause.USER_DATA_NOT_FOUND_IN_DATABASE,
+                    message: ErrorsMessage.USER_DATA_NOT_FOUND_IN_DATABASE,
+                });
+            }
+            const token = jwt.sign({ id: user._id }, "nuevaContraseña", { expiresIn: "1h" });
+
+            await userModel.findByIdAndUpdate(
+                { _id: user[0]._id },
+                { tokenResetPassword: token }
+            );
+
+            const transporter = nodemailer.createTransport({
+                service: "gmail",
+                auth: {
+                    user: `${config.GMAIL_USER}`,
+                    pass: `${config.GMAIL_PASSWORD}`,
+                },
+            });
+            const emailPort = config.EMAIL_PORT || 8080;
+
+            const mailOptions = {
+                from: "pablodpalumbo@gmail.com",
+                to: `${user[0].email}`,
+                subject: "LINK PARA RECUPERAR CUENTA",
+                html: `<a href='http://localhost:${emailPort}/views/resetpassword/${user[0]._id}/${token}'><button>Recuperar contraseña</button></a>`,
+            };
+
+            transporter.sendMail(mailOptions, (err, response) => {
+                if (err) {
+                    logger.error("Error al enviar el mail", err);
+                } else {
+                    logger.info("Respuesta del mail", response);
+                    response
+                        .status(200)
+                        .json("El email para la recuperación ha sido enviado");
+                }
+            });
+            return user;
+        } catch (error) {
+            logger.error("Error", error);
+        }
+    }
+
+    async createNewPassword(newPassword, userId, token) {
+        console.log("desde el manager", userId, "token", token);
+        try {
+            const user = await userModel.find({ _id: userId });
+
+            if (!user) {
+                return CustomError.createCustomError({
+                    name: ErrorsName.USER_DATA_NOT_FOUND_IN_DATABASE,
+                    cause: ErrorsCause.USER_DATA_NOT_FOUND_IN_DATABASE,
+                    message: ErrorsMessage.USER_DATA_NOT_FOUND_IN_DATABASE,
+                });
+            }
+
+            if (user[0].tokenResetPassword !== token) {
+                return CustomError.createCustomError({
+                    name: ErrorsName.USER_DATA_INCORRECT_TOKEN,
+                    cause: ErrorsCause.USER_DATA_INCORRECT_TOKEN,
+                    message: ErrorsMessage.USER_DATA_INCORRECT_TOKEN,
+                });
+            }
+            const hashNewPasswordUpdated = await hashPassword(newPassword);
+            await userModel.findByIdAndUpdate(
+                { _id: userId },
+                { password: hashNewPasswordUpdated }
+            );
+            const userUpdated = await userModel.find({ _id: userId });
+            return userUpdated
+        } catch (error) {
+            logger.error("Error", error);
+        }
+    }
+    async changeRol(userId) {
+        try {
+            const user = await userModel.find({ _id: userId });
+
+            if (!user) {
+                return CustomError.createCustomError({
+                    name: ErrorsName.USER_DATA_NOT_FOUND_IN_DATABASE,
+                    cause: ErrorsCause.USER_DATA_NOT_FOUND_IN_DATABASE,
+                    message: ErrorsMessage.USER_DATA_NOT_FOUND_IN_DATABASE,
+                });
+            }
+            if (user[0].role === "admin") {
+                await userModel.findByIdAndUpdate(
+                    { _id: userId },
+                    { role: 'premium' }
+                );
+
+            } else if (user[0].role === "premium") {
+                await userModel.findByIdAndUpdate(
+                    { _id: userId },
+                    { role: 'admin' }
+                );
+            }
+            logger.info('Rol cambiado con éxito')
+            return user
+        } catch (error) {
+            logger.error("Error", error);
+        }
+    }}
+
+
+
+

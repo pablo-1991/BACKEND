@@ -7,7 +7,7 @@ import {
     updateProductController,
     mockedProductsController
 } from "../controllers/products.controller.js";
-import { verificarUsuarioAdmin } from '../middlewares/auth.js'
+import { verificarUsuarioAdmin, verificarUsuarioPremium, verificarUsuarioPremiumOAdmin } from '../middlewares/auth.js'
 import { generateProduct } from "../mocks.js";
 
 const router = Router()
@@ -15,9 +15,9 @@ const router = Router()
 
 router.get('/', getProductsController)
 router.get('/:pid', getProductByIdController)
-router.post('/', verificarUsuarioAdmin, addProductController)
-router.put('/:pid', verificarUsuarioAdmin, updateProductController)
-router.delete('/:pid', verificarUsuarioAdmin, deleteProductController)
+router.post('/', verificarUsuarioPremiumOAdmin, addProductController)
+router.put('/:pid', verificarUsuarioPremiumOAdmin, updateProductController)
+router.delete('/:pid', verificarUsuarioPremiumOAdmin, deleteProductController)
 router.get('/mockingproducts/products', mockedProductsController)
 
 export default router

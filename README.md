@@ -34,6 +34,8 @@
 - '/users/registroGithub' GET registra usuarios por Github <br>
 - '/users/' GET recibe datos del usuario desde Github <br>
 - '/users/current' GET obtiene los datos del usuario actual <br>
+- '/users/forgot-password' POST envía mail para recuperar contraseña <br>
+- '/users/create-new-password/:user/:token' POST envía el nuevo password al back <br>
 
 
  -JWT:
@@ -49,6 +51,8 @@
 - '/views/registro' GET renderiza registro <br>
 - '/views/errorLogin' GET renderiza error en el login <br>
 - '/views/errorRegistro' GET renderiza error en el registro <br>
+- '/views/forgot-password' GET renderiza el ingreso de mail para recuperar contraseña <br>
+- '/views/resetpassword/:user/:token' GET renderiza input para ingresar nuevo password <br>
 
 
  -Real Time:

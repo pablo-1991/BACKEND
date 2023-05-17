@@ -16,7 +16,7 @@ const usersSchema = new mongoose.Schema({
         required: true,
     },
     full_name: {
-        type: String
+        type: String,
     },
     email: {
         type: String,
@@ -33,9 +33,13 @@ const usersSchema = new mongoose.Schema({
     },
     cartId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Carts',
+        ref: "Carts",
+        required: false,
     },
-    required: false
+    tokenResetPassword: {
+        type: String,
+        required: false,
+    },
 });
 
 export const userModel = mongoose.model("Users", usersSchema);

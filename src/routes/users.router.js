@@ -1,7 +1,7 @@
 import { Router } from 'express'
 import UsersManager from '../persistencia/DAO/mongoManagers/usersManager.js'
 import passport from 'passport'
-import { getUsersDataController } from '../controllers/users.controller.js'
+import {getUsersDataController, forgotPasswordController, createNewPasswordController, changeRolController} from '../controllers/users.controller.js'
 
 
 const router = Router()
@@ -67,5 +67,15 @@ router.get("/github", passport.authenticate("github"), (req, res) => {
 
 
 router.get('/current', getUsersDataController) // obtiene datos del usuario
+
+
+//recuperar contraseña
+router.post('/forgot-password', forgotPasswordController)
+
+//Crear contraseña nueva
+router.post('/create-new-password/:userId/:token', createNewPasswordController)
+
+//premium
+router.put('/premium/:uid', changeRolController)
 
 export default router

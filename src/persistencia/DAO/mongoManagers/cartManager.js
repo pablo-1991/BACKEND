@@ -100,7 +100,7 @@ export default class CartManager {
         }
     }
 
-    async addProductToCart(cid, pid) {
+    async addProductToCart(cid, pid, owner) {
         try {
             if (cid.length != 24 || pid.length != 24) {
                 CustomError.createCustomError({
@@ -130,6 +130,16 @@ export default class CartManager {
                     message: ErrorsMessage.PRODUCT_DATA_NOT_FOUND_IN_DATABASE,
                 });
                 logger.warn("PRODUCTO NO ENCONTRADO!")
+                return;
+            }
+
+            if (existsProduct.owner === owner.email) {
+                CustomError.createCustomError({
+                    name: ErrorsName.USER_DATA_NOT_ALLOWED,
+                    cause: ErrorsCause.USER_DATA_NOT_ALLOWED,
+                    message: ErrorsMessage.USER_DATA_NOT_ALLOWED,
+                });
+                logger.warn('No se puede agregar al carrito un producto creado por usted mismo')
                 return;
             }
 
@@ -399,10 +409,12 @@ export default class CartManager {
 
             if (unitPrices.length > 0) {
                 const tickets = await ticketsModel.find();
-                let code= 10000
-                if (tickets.length) {code = tickets[tickets.length - 1].code;
-                code += 1 }
-                        
+                let code = 10000
+                if (tickets.length) {
+                    code = tickets[tickets.length - 1].code;
+                    code += 1
+                }
+
                 ticket = await ticketsModel.create({
                     code: `${code}`,
                     purchase_datetime: new Date().toLocaleString(),

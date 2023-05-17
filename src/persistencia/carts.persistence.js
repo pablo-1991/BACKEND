@@ -1,7 +1,7 @@
 import File from './DAO/fileManagers/CartManager.js'
 import MongoDb from './DAO/mongoManagers/CartManager.js'
-import {cartsModel} from './mongodb/models/carts.model.js'
-import {Command} from 'commander'
+import { cartsModel } from './mongodb/models/carts.model.js'
+import { Command } from 'commander'
 
 const program = new Command();
 program.option('-p', 'persistence', 'memory');
@@ -15,9 +15,9 @@ switch (argv) {
     case 'fs':
         persistence = new File('../files/cart.json')
         break;
-        case 'mongo':
-            persistence = new MongoDb('Carts', cartsModel)
-            break;
+    case 'mongo':
+        persistence = new MongoDb('Carts', cartsModel)
+        break;
     default:
         break;
 }
@@ -34,8 +34,8 @@ export async function getCartById(cid) {
     return await persistence.getCartById(cid)
 }
 
-export async function addProductToCart(cid, pid) {
-    return await persistence.addProductToCart(cid, pid)
+export async function addProductToCart(cid, pid, owner) {
+    return await persistence.addProductToCart(cid, pid, owner)
 }
 
 export async function deleteProductFromCart(cid, pid) {
@@ -54,6 +54,6 @@ export async function editCart(cid, newCart) {
     return await persistence.editCart(cid, newCart)
 }
 
-export async function completeSale(cid, userFullName){
+export async function completeSale(cid, userFullName) {
     return await persistence.completeSale(cid, userFullName)
 }

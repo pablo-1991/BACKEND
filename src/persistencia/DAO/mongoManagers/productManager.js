@@ -60,7 +60,7 @@ export default class ProductManager {
                     ? `https://localhost8080/products?page=${allProductsDB.nextPage}`
                     : null,
             };
-            
+
             logger.info("PRODUCTOS ENCONTRADOS!")
             return { message: "Productos encontrados", products: products };
         } catch (error) {
@@ -96,7 +96,7 @@ export default class ProductManager {
         }
     }
 
-    async addProduct(product) {
+    async addProduct(product, owner) {
         try {
             if (
                 !product.title ||
@@ -126,7 +126,10 @@ export default class ProductManager {
                 return alreadyExists;
             }
 
-            const newProduct = await productsModel.create(product);
+            product.owner = owner.email;
+
+            let newProduct = await productsModel.create(product);
+            logger.info("PRODUCTO CREADO!");
 
             return { message: "Producto creado con éxito", product: newProduct };
         } catch (error) {
@@ -136,7 +139,7 @@ export default class ProductManager {
         }
     }
 
-    async deleteProduct(id) {
+    async deleteProduct(id, owner) {
         try {
             if (id.length != 24) {
                 CustomError.createCustomError({
@@ -145,6 +148,19 @@ export default class ProductManager {
                     message: ErrorsMessage.PRODUCT_DATA_INCORRECT_ID,
                 });
                 return;
+            }
+
+            let product = await productsModel.find({ _id: id });
+
+            if (owner.role === "premium") {
+                if (product[0].owner !== owner.email) {
+                    CustomError.createCustomError({
+                        name: ErrorsName.USER_DATA_NOT_ALLOWED,
+                        cause: ErrorsCause.USER_DATA_NOT_ALLOWED,
+                        message: ErrorsMessage.USER_DATA_NOT_ALLOWED,
+                    });
+                    return;
+                }
             }
 
             const deletedProduct = await productsModel.findByIdAndDelete(id);
@@ -165,8 +181,7 @@ export default class ProductManager {
         }
     }
 
-    async updateProduct(id, newProduct) {
-
+    async updateProduct(id, newProduct, owner) {
         try {
             if (id.length != 24) {
                 CustomError.createCustomError({
@@ -174,7 +189,7 @@ export default class ProductManager {
                     cause: ErrorsCause.PRODUCT_DATA_INCORRECT_ID,
                     message: ErrorsMessage.PRODUCT_DATA_INCORRECT_ID,
                 });
-                return
+                return;
             }
 
             if (
@@ -191,8 +206,22 @@ export default class ProductManager {
                     cause: ErrorsCause.PRODUCT_DATA_INCOMPLETE,
                     message: ErrorsMessage.PRODUCT_DATA_INCOMPLETE,
                 });
-                logger.warn("FALTAN DATOS DEL PRODUCTO")
+                logger.warn("Faltan datos del producto");
                 return;
+            }
+
+            let product = await productsModel.find({ _id: id });
+
+
+            if (owner.role === "premium") {
+                if (product[0].owner !== owner.email) {
+                    CustomError.createCustomError({
+                        name: ErrorsName.USER_DATA_NOT_ALLOWED,
+                        cause: ErrorsCause.USER_DATA_NOT_ALLOWED,
+                        message: ErrorsMessage.USER_DATA_NOT_ALLOWED,
+                    });
+                    return;
+                }
             }
 
             const updatedProduct = await productsModel.findByIdAndUpdate(
@@ -236,7 +265,9 @@ export default class ProductManager {
                 //product.save();
             }
             console.log(products)
+            logger.info("Productos falsos creados con éxito");
             return { message: 'Productos creados con éxito', products };
+
         } catch (error) {
             logger.error("Error desde el manager", error);
             return error;
