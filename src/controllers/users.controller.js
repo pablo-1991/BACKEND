@@ -1,7 +1,9 @@
 import {
     forgotPasswordService,
     createNewPasswordServices,
-    changeRolServices
+    changeRolServices,
+    getUserDataFromMailService,
+    addCartToUserService
 } from '../services/users.services.js'
 
 
@@ -64,7 +66,30 @@ export const changeRolController = async (req, res) => {
     try {
         const user = await changeRolServices(userId)
         console.log(user)
-        res.json({ message: 'Role update successfully' });
+        res.json({ message: 'ROL CAMBIADO!' });
     } catch (error) {
         console.log("error");
-    }}
+    }
+}
+
+export const addCartToUserController = async (req, res) => {
+    const userId = req.body.uid
+    const cartId = req.body.cid
+    try {
+        const user = await addCartToUserService(userId, cartId)
+        console.log(user)
+        res.json({ message: 'User update successfully' });
+    } catch (error) {
+        console.log("error");
+    }
+}
+
+export const getUserDataFromMailController = async (req, res) => {
+    const email = req.body
+    try {
+        const response = await getUserDataFromMailService(email)
+        res.json({ user: response })
+    } catch (error) {
+        console.log('error');
+    }
+}

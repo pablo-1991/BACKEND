@@ -10,6 +10,9 @@ import passport from "passport";
 import config from "./config.js";
 import { errorMiddleware } from './utils/errors/errorsMiddleware.js'
 import { createLog } from './middlewares/winston.middleware.js'
+import swaggerJSDoc from 'swagger-jsdoc'
+import swaggerUi from 'swagger-ui-express'
+import { swaggerSetup } from "./SwaggerSpecs.js";
 
 
 
@@ -74,6 +77,7 @@ app.use('/chat', chatRouter)
 app.use("/views", viewsRouter)
 app.use('/jwt', jwtRouter)
 app.use('/loggerTest', loggerTestRouter)
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSetup))
 
 //faker
 app.use(errorMiddleware) 

@@ -18,3 +18,9 @@ export async function createNewPassword(password, userId, token) {
 export async function changeRol(userId) {
     return await persistence.changeRol(userId)
 }
+export async function getUserDataFromMail(email){
+    return await persistence.getUserDataFromMail(email)
+}
+export async function addCartToUser(uid, cid) {
+    return await persistence.addCartToUser(uid,cid)
+}

@@ -23,7 +23,7 @@ export const getProductsController = async (req, res) => {
         });}
 
     try {
-        let userName = req.user
+        //let userName = req.user.first_name
         let user = req.user;
         let products = await getProductsService(limit, page, sort, category, user); 
         res.json({ response: products });
@@ -45,9 +45,9 @@ export const getProductByIdController = async (req, res) => {
 
 export const addProductController = async (req, res) => {
     try {
+        let owner = req.user;
         let newProduct = req.body;
-        let owner = req.user
-        const newProductCreated = await addProductService(newProduct, owner);
+                const newProductCreated = await addProductService(newProduct, owner);
         res.json({ response: newProductCreated });
     } catch (error) {
         console.log("Error desde el controller: ", error);

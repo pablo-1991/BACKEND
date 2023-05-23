@@ -1,7 +1,12 @@
 import { Router } from 'express'
 import UsersManager from '../persistencia/DAO/mongoManagers/usersManager.js'
 import passport from 'passport'
-import {getUsersDataController, forgotPasswordController, createNewPasswordController, changeRolController} from '../controllers/users.controller.js'
+import { getUsersDataController, 
+    forgotPasswordController, 
+    createNewPasswordController, 
+    changeRolController,
+    getUserDataFromMailController, 
+    addCartToUserController} from '../controllers/users.controller.js'
 
 
 const router = Router()
@@ -40,6 +45,7 @@ router.post("/registro",
         successRedirect: '/products',
         passReqToCallback: true,
     }))
+///////////////////////
 
 router.post(
     '/login',
@@ -65,8 +71,8 @@ router.get("/github", passport.authenticate("github"), (req, res) => {
     res.redirect("/products")
 }) //GH devuelve la respuesta
 
-
-router.get('/current', getUsersDataController) // obtiene datos del usuario
+router.get('/current', getUsersDataController)// obtiene datos del usuario
+router.post('/current', getUserDataFromMailController)
 
 
 //recuperar contraseña
@@ -77,5 +83,7 @@ router.post('/create-new-password/:userId/:token', createNewPasswordController)
 
 //premium
 router.put('/premium/:uid', changeRolController)
+
+router.put('/add-cart-to-user', addCartToUserController)
 
 export default router

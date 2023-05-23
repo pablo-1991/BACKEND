@@ -1,0 +1,86 @@
+paths:
+  /carts:
+    get:
+      description: OBTENER TODOS LOS CARTS
+      tags: 
+        - Carts
+      responses: 
+        "200":
+          description: Get all carts
+          content: 
+            application/json:
+              schemas: 
+                type: Array
+                items: 
+                  $ref: '#/components/schemas/Cart'
+
+  /carts/{cid}:
+    get:
+      summary: OBTENER CART POR ID
+      tags: 
+        - Carts
+      parameters:
+      - name: cid
+        in: path
+        description: cart identifier  
+      responses: 
+        "200":
+          description: Success
+          content: 
+            application/json:
+              schemas: 
+                type: Object
+                items: 
+                  $ref: '#/components/schemas/Cart'
+
+
+  /carts/{cid}/products/{pid}:
+    get:
+      summary: AGREGAR UN PRODUCTO POR ID A UN CART POR SU ID
+      tags: 
+        - Carts
+      parameters:
+      - name: cid
+        in: path
+        description: cart identifier  
+      - name: pid
+        in: path
+        description: product identifier    
+      responses: 
+        "200":
+          description: Success
+          content: 
+            application/json:
+              schemas: 
+                type: Object
+                items: 
+                  $ref: '#/components/schemas/Cart'
+
+
+  /carts/{cid}/purchase:
+    get:
+      summary: COMPRAR CART
+      tags: 
+        - Carts
+      parameters:
+      - name: cid
+        in: path
+        description: cart identifier    
+      responses: 
+        "200":
+          description: Success
+          content: 
+            application/json:
+              schemas: 
+                type: Object
+                items: 
+                  $ref: '#/components/schemas/Cart'
+
+
+components:
+  schemas:
+    Cart:
+      type: object
+      properties:
+        products: 
+          type: array

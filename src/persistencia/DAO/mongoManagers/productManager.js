@@ -41,6 +41,7 @@ export default class ProductManager {
                     code: el.code,
                     stock: el.stock,
                     status: el.status,
+                    id: el._id,
                 };
             });
 
@@ -125,17 +126,14 @@ export default class ProductManager {
                 logger.warn("PRODUCTO YA EXISTE EN DB!")
                 return alreadyExists;
             }
-
             product.owner = owner.email;
 
             let newProduct = await productsModel.create(product);
             logger.info("PRODUCTO CREADO!");
-
             return { message: "Producto creado con éxito", product: newProduct };
         } catch (error) {
-            console.log(error);
-            logger.error("Error desde el manager", error);
-            return error;
+            //logger.error("Error desde el manager", error);
+            //return error;
         }
     }
 
@@ -248,7 +246,7 @@ export default class ProductManager {
     async mockedProducts() {
         try {
             const products = [];
-            for (let i = 0; i < 50; i++) {
+            for (let i = 0; i < 30; i++) {
                 const product = await productsModel.create({
 
                     title: faker.commerce.product(),

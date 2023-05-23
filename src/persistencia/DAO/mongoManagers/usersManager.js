@@ -179,7 +179,42 @@ export default class UsersManager {
         } catch (error) {
             logger.error("Error", error);
         }
-    }}
+    }
+    async getUserDataFromMail(email) {
+        console.log('mail que llega', email)
+        try {
+            const user = await userModel.find({ email: email.mail });
+            logger.info('user del manager', user)
+            if (!user) {
+                return CustomError.createCustomError({
+                    name: ErrorsName.USER_DATA_NOT_FOUND_IN_DATABASE,
+                    cause: ErrorsCause.USER_DATA_NOT_FOUND_IN_DATABASE,
+                    message: ErrorsMessage.USER_DATA_NOT_FOUND_IN_DATABASE,
+                });
+            }
+            return user[0]
+        } catch (error) {
+            logger.error("Error", error);
+        }
+    }
+
+    async addCartToUser(uid, cid) {
+        console.log(uid, cid)
+        try {
+            const userWithCart = await userModel.findByIdAndUpdate(
+                uid,
+                {
+                    cartId: cid,
+                },
+                { new: true })
+            return userWithCart
+        } catch (error) {
+            logger.error("Error", error);
+        }
+    }
+}
+
+
 
 
 

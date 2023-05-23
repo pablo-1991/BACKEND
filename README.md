@@ -36,6 +36,7 @@
 - '/users/current' GET obtiene los datos del usuario actual <br>
 - '/users/forgot-password' POST envía mail para recuperar contraseña <br>
 - '/users/create-new-password/:user/:token' POST envía el nuevo password al back <br>
+- '/users/add-cart-to-user' PUT agrega un carrito a un usuario <br>
 
 
  -JWT:

@@ -3,7 +3,9 @@ import {
     loginUser,
     forgotPassword,
     createNewPassword,
-    changeRol
+    changeRol,
+    getUserDataFromMail,
+    addCartToUser
 } from '../persistencia/users.persistence.js'
 
 
@@ -34,5 +36,15 @@ export async function createNewPasswordServices(password, userId, token) {
 
 export async function changeRolServices(userId) {
     const user = await changeRol(userId)
+    return user
+}
+
+export async function getUserDataFromMailService(email){
+    const user = await getUserDataFromMail(email)
+    return user
+}
+
+export async function addCartToUserService(uid, cid) {
+    const user = await addCartToUser(uid, cid)
     return user
 }

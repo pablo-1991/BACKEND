@@ -46,7 +46,7 @@ export default class CartManager {
             let newCartFromUuser = { products: cart };
             logger.info("CART CREADO CON ÉXITO!")
             const newCart = await cartsModel.create(newCartFromUuser);
-            return { message: "Carrito creado con éxito", cart: newCart };
+            return { message: "Carrito creado con éxito", cart: newCart , success: true };
         } catch (error) {
             logger.error("Error desde el manager", error);
             return error;
