@@ -17,7 +17,7 @@ router.get('/', getProductsController)
 router.get('/:pid', getProductByIdController)
 router.post('/', verificarUsuarioPremiumOAdmin, addProductController)
 router.put('/:pid', verificarUsuarioPremiumOAdmin, updateProductController)
-router.delete('/:pid', verificarUsuarioPremiumOAdmin, deleteProductController)
+router.delete('/:pid', deleteProductController)
 router.get('/mockingproducts/products', mockedProductsController)
 
 export default router

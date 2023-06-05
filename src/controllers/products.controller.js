@@ -71,7 +71,7 @@ export const updateProductController = async (req, res) => {
 export const deleteProductController = async (req, res) => {
     try {
         const pid = req.params.pid;
-        let owner = req.user;
+        let owner = req.body;
         const deletedProduct = await deleteProductService(pid, owner);
         res.json({
             response: deletedProduct,

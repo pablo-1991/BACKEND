@@ -138,6 +138,7 @@ export default class ProductManager {
     }
 
     async deleteProduct(id, owner) {
+        console.log(owner)
         try {
             if (id.length != 24) {
                 CustomError.createCustomError({
