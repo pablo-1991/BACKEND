@@ -1,5 +1,5 @@
 import { userModel } from "../../mongodb/models/users.model.js";
-import { hashPassword, comparePasswords } from "../../../utils.js";
+import { hashPassword, comparePasswords, generateToken } from "../../../utils.js";
 import config from "../../../config.js";
 import UsersRepository from "../../repositories/users.repositories.js";
 import { faker } from "@faker-js/faker";
@@ -15,6 +15,25 @@ import {
 
 
 export default class UsersManager {
+
+    async getUsers() {
+        try {
+            const users = await userModel.find()
+            if (!users) {
+                CustomError.createCustomError({
+                    name: ErrorsName.PRODUCT_DATA_NOT_FOUND_IN_DATABASE,
+                    cause: ErrorsCause.PRODUCT_DATA_NOT_FOUND_IN_DATABASE,
+                    message: ErrorsMessage.PRODUCT_DATA_NOT_FOUND_IN_DATABASE,
+                });
+            }
+
+            return users
+        } catch (error) {
+            logger.error("Error", error);
+            throw new Error(error);
+        }
+    }
+
     async createUser(user) {
         if (!user) {
             CustomError.createCustomError({
@@ -64,6 +83,11 @@ export default class UsersManager {
         if (usuario) {
             const isPassword = await comparePasswords(password, usuario[0].password);
             if (isPassword) {
+                // AUTENTICACION:
+                const token = generateToken(user)
+                console.log('token generado con éxito', token)
+                res.cookie('token', token, { httpOnly: true }).json({ token })
+                //
                 return usuario;
             }
         } else {
@@ -162,20 +186,19 @@ export default class UsersManager {
                     message: ErrorsMessage.USER_DATA_NOT_FOUND_IN_DATABASE,
                 });
             }
-            if (user[0].role === "admin") {
-                await userModel.findByIdAndUpdate(
+            let newUser;
+
+            if (user[0].role === "admin" && user[0].documents.length > 0) {
+                newUser = await userModel.findByIdAndUpdate(
                     { _id: userId },
                     { role: 'premium' }
                 );
 
-            } else if (user[0].role === "premium") {
-                await userModel.findByIdAndUpdate(
-                    { _id: userId },
-                    { role: 'admin' }
-                );
+                logger.info('Rol cambiado con éxito')
+            } else {
+                logger.error('El usuario no ha cargado documentación. No puede cambiar a premium.')
             }
-            logger.info('Rol cambiado con éxito')
-            return user
+            return newUser
         } catch (error) {
             logger.error("Error", error);
         }
@@ -212,7 +235,151 @@ export default class UsersManager {
             logger.error("Error", error);
         }
     }
+    async uploadFiles(uid, docs) {
+        console.log(uid)
+        console.log(docs)
+        try {
+            const updatedUser = await userModel.findByIdAndUpdate(
+                uid,
+                {
+                    documents: docs
+                },
+                { new: true }
+            );
+
+            return updatedUser;
+        } catch (error) {
+            logger.error("Error", error);
+            throw new Error(error);
+        }
+    }
+    async login(user, time) {
+        try {
+            const updatedUser = await userModel.findByIdAndUpdate(
+                user._id,
+                {
+                    lastConnection: time
+                },
+                { new: true }
+            );
+            return updatedUser;
+        } catch (error) {
+            logger.error("Error", error);
+            throw new Error(error);
+        }
+    }
+    async logout(user, time) {
+        console.log('user del manager logout', user)
+        logger.info('del manager logout user y time', user, time)
+        try {
+            const updatedUser = await userModel.findByIdAndUpdate(
+                user._id,
+                {
+                    lastConnection: time
+                },
+                { new: true }
+
+            );
+            console.log('del manager updatedUser', updatedUser)
+
+            return updatedUser.lastConnection;
+        } catch (error) {
+            logger.error("Error", error);
+            throw new Error(error);
+        }
+    }
+    async deleteUsers() {
+        try {
+            const users = await userModel.find({})
+
+            const now = Date.parse(new Date());
+            const fortyEightHsInMs = 172800000;
+            let lastTimeMs;
+            const deletedDisconnected = []
+            const deletedNotLogged = []
+
+            for (let i = 0; i < users.length; i++) {
+
+                if (users[i].lastConnection !== "0") {
+                    let lastTime = users[i].lastConnection
+                    lastTimeMs = Date.parse(lastTime)
+
+                    if (now - lastTimeMs > fortyEightHsInMs) {
+                        info.logger(`Usuario no vigente, se elimina: ${users[i].email}`)
+                        deletedDisconnected.push(users[i].email)
+                        await userModel.deleteOne({ email: users[i].email })
+
+                        const transporter = nodemailer.createTransport({
+                            service: "gmail",
+                            auth: {
+                                user: `${config.GMAIL_USER}`,
+                                pass: `${config.GMAIL_PASSWORD}`,
+                            },
+                        });
+                        const emailPort = config.EMAIL_PORT || 8080;
+
+                        const mailOptions = {
+                            from: "pablodpalumbo@gmail.com",
+                            to: `${users[i].email}`,
+                            subject: "Eliminación de cuenta por inactividad",
+                            text: 'Su cuenta ha sido eliminada por inactividad.',
+                        };
+
+                        transporter.sendMail(mailOptions, (err, response) => {
+                            if (err) {
+                                logger.error("Error al enviar el mail", err);
+                            } else {
+                                logger.info("Respuesta del mail", response);
+                                response
+                                    .status(200)
+                                    .json("El email que informa al usuario que ha sido eliminado ha sido enviado");
+                            }
+                        });
+
+                    } else { logger.info(`Usuario vigentes: ${users[i].email}`) }
+
+                } else {
+                    logger.info(`Usuario registrado, nunca loggeado. Se elimina: ${users[i].email}`)
+                    deletedNotLogged.push(users[i].email)
+                    await userModel.deleteOne({ email: users[i].email })
+
+                    const transporter = nodemailer.createTransport({
+                        service: "gmail",
+                        auth: {
+                            user: `${config.GMAIL_USER}`,
+                            pass: `${config.GMAIL_PASSWORD}`,
+                        },
+                    });
+                    const emailPort = config.EMAIL_PORT || 8080;
+
+                    const mailOptions = {
+                        from: "pablodpalumbo@gmail.com",
+                        to: `${users[i].email}`,
+                        subject: "ELIMINACION DE CUENTA POR NUNCA HABER INGRESADO",
+                        text: 'Su cuenta ha sido eliminada por haberse registrado pero no haber ingresado.'
+                    };
+
+                    transporter.sendMail(mailOptions, (err, response) => {
+                        if (err) {
+                            logger.error("Error al enviar el mail", err);
+                        } else {
+                            logger.info("Respuesta del mail", response);
+                            response
+                                .status(200)
+                                .json("El email que informa al usuario que ha sido eliminado ha sido enviado");
+                        }
+                    })
+                }
+            }
+            const newUsers = await userModel.find()
+            return { message: 'Users deleted successfully', deletedDisconnected, deletedNotLogged, remainUsers: newUsers }
+        } catch (error) {
+            logger.error("Error", error);
+            throw new Error(error);
+        }
+    }
 }
+
 
 
 

@@ -13,8 +13,7 @@ import { createLog } from './middlewares/winston.middleware.js'
 import swaggerJSDoc from 'swagger-jsdoc'
 import swaggerUi from 'swagger-ui-express'
 import { swaggerSetup } from "./SwaggerSpecs.js";
-
-
+import cors from "cors";
 
 //IMPORTAR dbConfig
 import './persistencia/mongodb/dbConfig.js'
@@ -36,6 +35,7 @@ import loggerTestRouter from './routes/loggerTest.router.js'
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
+app.use(cors())
 
 //cookies
 app.use(cookieParser())
@@ -59,7 +59,7 @@ app.use(
             collectionName: 'sessions'
         }),
         cookie: {
-            maxAge: 1000 * 60 * 60 * 24,
+            maxAge: 9999999,
         }
     })
 )
@@ -80,12 +80,12 @@ app.use('/loggerTest', loggerTestRouter)
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSetup))
 
 //faker
-app.use(errorMiddleware) 
+app.use(errorMiddleware)
 
 //logger
 app.use(createLog)
 
-const PORT = config.PORT
+const PORT = config.PORT || 8080
 const httpServer = app.listen(PORT, () => {
     console.log(`Escuchando al puerto ${PORT}`)
 })

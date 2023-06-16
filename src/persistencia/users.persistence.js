@@ -1,8 +1,11 @@
 import MongoDb from './DAO/mongoManagers/usersManager.js'
 import { userModel } from './mongodb/models/users.model.js'
 
-let persistence = new MongoDb('Products', userModel)
+let persistence = new MongoDb('Users', userModel)
 
+export async function getUsers() {
+    return await persistence.getUsers()
+}
 export async function loginUser(user) {
     return await persistence.loginUser(user)
 }
@@ -23,4 +26,16 @@ export async function getUserDataFromMail(email){
 }
 export async function addCartToUser(uid, cid) {
     return await persistence.addCartToUser(uid,cid)
+}
+export async function uploadFiles(uid, docs) {
+    return await persistence.uploadFiles(uid,docs)
+}
+export async function login(user, time) {
+    return await persistence.login(user, time)
+}
+export async function logout(user, time) {
+    return await persistence.logout(user, time)
+}
+export async function deleteUsers(user, time) {
+    return await persistence.deleteUsers(user, time)
 }

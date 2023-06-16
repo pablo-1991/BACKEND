@@ -5,7 +5,7 @@ const swaggerOptions = {
     definition:{
         openapi: '3.0.0',
         info: {
-            title: 'Documentation API Los Lupinos',
+            title: 'API BACKEND',
             version: '1.0.0'
         }
     },

@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { jwtValidation } from "../middlewares/jwt.middleware.js";
 import {
     addProductController,
     deleteProductController,
@@ -15,8 +16,8 @@ const router = Router()
 
 router.get('/', getProductsController)
 router.get('/:pid', getProductByIdController)
-router.post('/', verificarUsuarioPremiumOAdmin, addProductController)
-router.put('/:pid', verificarUsuarioPremiumOAdmin, updateProductController)
+router.post('/', addProductController)
+router.put('/:pid', updateProductController)
 router.delete('/:pid', deleteProductController)
 router.get('/mockingproducts/products', mockedProductsController)
 

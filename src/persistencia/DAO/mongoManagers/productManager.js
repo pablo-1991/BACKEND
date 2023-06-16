@@ -106,7 +106,8 @@ export default class ProductManager {
                 !product.code ||
                 !product.stock ||
                 !product.status ||
-                !product.category
+                !product.category ||
+                !product.thumbnails
             ) {
                 CustomError.createCustomError({
                     name: ErrorsName.PRODUCT_DATA_INCOMPLETE,
@@ -172,8 +173,34 @@ export default class ProductManager {
                 logger.warn("PRODUCTO NO ENCONTRADO")
                 return;
             }
+
+            const transporter = nodemailer.createTransport({
+                service: "gmail",
+                auth: {
+                    user: `${config.GMAIL_USER}`,
+                    pass: `${config.GMAIL_PASSWORD}`,
+                },
+            });
+            const emailPort = config.EMAIL_PORT || 8080;
+
+            const mailOptions = {
+                from: "pablodpalumbo@gmail.com",
+                to: `${owner.email}`,
+                subject: "Eliminación de producto",
+                text: `El producto eliminado es ${deletedProduct[0].title}`};
+
+            transporter.sendMail(mailOptions, (err, response) => {
+                if (err) {
+                    logger.error("Error al enviar el mail", err);
+                } else {
+                    logger.info("Respuesta del mail", response);
+                    response
+                        .status(200)
+                        .json("EL PRODUCTO ELIMINADO HA SIDO ENVIADO POR MAIL AL USUARIO");
+                }
+            });
             logger.info("PRODUCTO ELIMINADO")
-            return { message: "Producto eliminado con éxito", deletedProduct };
+            return { message: "Producto eliminado con éxito", deletedProduct, status: 'success' };
         } catch (error) {
             logger.error("Error desde el manager", error);
             return error;
@@ -190,7 +217,6 @@ export default class ProductManager {
                 });
                 return;
             }
-
             if (
                 !newProduct.title ||
                 !newProduct.description ||
@@ -208,7 +234,6 @@ export default class ProductManager {
                 logger.warn("Faltan datos del producto");
                 return;
             }
-
             let product = await productsModel.find({ _id: id });
 
 
@@ -237,7 +262,7 @@ export default class ProductManager {
                 { new: true }
             );
             logger.info("PRODUCTO ACTUALIZADO!")
-            return updatedProduct;
+            return { message: "Producto actualizado con exito", updatedProduct, status: 'success' };
         } catch (error) {
             logger.error("Error desde el manager", error);
             return error;

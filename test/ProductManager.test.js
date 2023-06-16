@@ -1,7 +1,8 @@
 import './database.js';
 import { expect } from 'chai';
-import ProductManager from '../src/persistencia/DAO/mongoManagers/ProductManager.js';
-import { productsModel } from '../src/persistencia/mongodb/models/products.model.js';
+import ProductManager from '../src/persistencia/DAO/mongoManagers/productManager.js';
+
+
 
 describe('TESTING PRODUCTMANAGER', () => {
     before(function () {

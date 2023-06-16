@@ -46,7 +46,7 @@ export default class CartManager {
             let newCartFromUuser = { products: cart };
             logger.info("CART CREADO CON ÉXITO!")
             const newCart = await cartsModel.create(newCartFromUuser);
-            return { message: "Carrito creado con éxito", cart: newCart , success: true };
+            return { message: "Carrito creado con éxito", cart: newCart, success: true };
         } catch (error) {
             logger.error("Error desde el manager", error);
             return error;
@@ -133,15 +133,15 @@ export default class CartManager {
                 return;
             }
 
-            if (existsProduct.owner === owner.email) {
-                CustomError.createCustomError({
-                    name: ErrorsName.USER_DATA_NOT_ALLOWED,
-                    cause: ErrorsCause.USER_DATA_NOT_ALLOWED,
-                    message: ErrorsMessage.USER_DATA_NOT_ALLOWED,
-                });
-                logger.warn('No se puede agregar al carrito un producto creado por usted mismo')
-                return;
-            }
+            // if (existsProduct.owner === owner.email) {
+            //     CustomError.createCustomError({
+            //         name: ErrorsName.USER_DATA_NOT_ALLOWED,
+            //         cause: ErrorsCause.USER_DATA_NOT_ALLOWED,
+            //         message: ErrorsMessage.USER_DATA_NOT_ALLOWED,
+            //     });
+            //     logger.warn('No se puede agregar al carrito un producto creado por usted mismo')
+            //     return;
+            // }
 
             if (cart.products.findIndex((el) => el.id == pid) !== -1) {
                 cart.products[
@@ -201,7 +201,7 @@ export default class CartManager {
             }
             await cart.save();
             logger.info("CART ACTUALIZADO CON ÉXITO")
-            return { message: "Product deleted from cart successfully", cart };
+            return { message: "Product deleted from cart successfully", cart, success: true };
         } catch (error) {
             logger.error("Error desde el manager", error);
             return error;
@@ -285,7 +285,7 @@ export default class CartManager {
 
             await cart.save();
             logger.info("CANTIDAD DEL PRODUCTO ACTUALIZADO")
-            return { message: "Quantity edited successfuly", product: cart };
+            return { message: "Quantity edited successfuly", product: cart, success: true };
         } catch (error) {
             logger.error("Error desde el manager", error);
             return error;
@@ -390,7 +390,7 @@ export default class CartManager {
             for (let index = 0; index < iterations; index++) {
                 el = cart.products[index];
                 product = await productsModel.findOne({ _id: el.id });
-                if (el.quantity <= product.stock) {
+                    if (el.quantity <= product.stock) {
                     //modifica el stock de productos
                     product.stock = product.stock - el.quantity;
                     //para calcular total
@@ -404,7 +404,6 @@ export default class CartManager {
             }
             cart.products = newProductsInCart;
             await cart.save();
-
             logger.info("CART ACTUALIZADO")
 
             if (unitPrices.length > 0) {
@@ -436,6 +435,47 @@ export default class CartManager {
                         "No se pudo realizar la compra porque la cantidad de productos supera el stock.",
                 };
             }
+        } catch (error) {
+            logger.error("Error desde el manager", error);
+            return error;
+        }
+    }
+    
+    async eraseProductFromCart(cid, pid) {
+        try {
+            if (cid.length != 24 || pid.length != 24) {
+                CustomError.createCustomError({
+                    name: ErrorsName.CART_DATA_INCORRECT_ID,
+                    cause: ErrorsCause.CART_DATA_INCORRECT_ID,
+                    message: ErrorsMessage.CART_DATA_INCORRECT_ID,
+                });
+                return;
+            }
+            const cart = await cartsModel.findOne({ _id: cid });
+            if (!cart) {
+                CustomError.createCustomError({
+                    name: ErrorsName.CART_DATA_NOT_FOUND_IN_DATABASE,
+                    cause: ErrorsCause.CART_DATA_NOT_FOUND_IN_DATABASE,
+                    message: ErrorsMessage.CART_DATA_NOT_FOUND_IN_DATABASE,
+                });
+                logger.warn('CART NO ENCONTRADO')
+                return;
+            }
+
+            const existsProduct = await productsModel.findById(pid);
+            if (!existsProduct) {
+                CustomError.createCustomError({
+                    name: ErrorsName.PRODUCT_DATA_NOT_FOUND_IN_DATABASE,
+                    cause: ErrorsCause.PRODUCT_DATA_NOT_FOUND_IN_DATABASE,
+                    message: ErrorsMessage.PRODUCT_DATA_NOT_FOUND_IN_DATABASE,
+                });
+                logger.warn('Producto no encontrado en la base de datos')
+                return;
+            }
+            const result = await productsModel.findByIdAndDelete(pid)
+
+            logger.info('PRODUCTO ELIMINADO DEL CART!')
+            return { message: "Product deleted from cart successfully", result, status: 'success' };
         } catch (error) {
             logger.error("Error desde el manager", error);
             return error;

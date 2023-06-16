@@ -5,10 +5,26 @@ import {
     createNewPassword,
     changeRol,
     getUserDataFromMail,
-    addCartToUser
+    addCartToUser,
+    uploadFiles,
+    login,
+    logout,
+    getUsers,
+    deleteUsers
 } from '../persistencia/users.persistence.js'
 
+import UsersRespDTO from '../persistencia/DTO/usersResp.dto.js'
 
+export async function getUsersService() {
+    const users = await getUsers()
+    let usersToSend = []
+
+    for (let i = 0; i < users.length; i++) {
+        const userToSend = new UsersRespDTO(users[i])
+        usersToSend.push(userToSend)
+    }
+    return usersToSend
+}
 
 export async function createUserService(user) {
     const newUser = await createUser(user)
@@ -39,7 +55,7 @@ export async function changeRolServices(userId) {
     return user
 }
 
-export async function getUserDataFromMailService(email){
+export async function getUserDataFromMailService(email) {
     const user = await getUserDataFromMail(email)
     return user
 }
@@ -47,4 +63,24 @@ export async function getUserDataFromMailService(email){
 export async function addCartToUserService(uid, cid) {
     const user = await addCartToUser(uid, cid)
     return user
+}
+
+export async function uploadFilesService(uid, docs) {
+    const user = await uploadFiles(uid, docs)
+    return user
+}
+
+export async function loginService(user, time) {
+    const response = await login(user, time)
+    return response
+}
+
+export async function deleteUsersService() {
+    const users = await deleteUsers()
+    return users
+}
+
+export async function logoutService(user, time) {
+    const response = await logout(user, time)
+    return response
 }

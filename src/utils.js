@@ -14,6 +14,6 @@ export const comparePasswords = async (password, passwordBD) => {
 }
 
 export const generateToken = (user) => {
-    const token = jwt.sign({ user }, "secretJWT", { expiresIn: "10m" })
+    const token = jwt.sign({ user }, "secretJWT", { expiresIn: "20m" })
     return token
 }

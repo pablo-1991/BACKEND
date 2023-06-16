@@ -1,42 +1,26 @@
 import { Router } from 'express'
 import UsersManager from '../persistencia/DAO/mongoManagers/usersManager.js'
 import passport from 'passport'
-import { getUsersDataController, 
-    forgotPasswordController, 
-    createNewPasswordController, 
+import { upload } from "../middlewares/multer.js";
+import {
+    getUsersDataController,
+    forgotPasswordController,
+    createNewPasswordController,
     changeRolController,
-    getUserDataFromMailController, 
-    addCartToUserController} from '../controllers/users.controller.js'
+    getUserDataFromMailController,
+    addCartToUserController,
+    uploadFilesController,
+    loginSuccessController,
+    loginController,
+    logoutController,
+    getUsersController,
+    deleteUsersController
+} from '../controllers/users.controller.js'
 
 
 const router = Router()
 const usersMan = new UsersManager()
 
-// router.post("/session", (req, res) => {
-//     const { username, password } = req.body
-//     req.session.username = username
-//     req.session.password = password
-//     res.json({ message: "Sesion iniciada con exito" })
-// })
-
-// router.get("/logout", (req, res) => {
-//     req.session.destroy((error) => {
-//         if (error) {
-//             console.log(error)
-//             res.json({ message: error })
-//         } else { res.json({ message: "Sesion eliminada con exito" }) }
-//     })
-// })
-
-// registro sin passport
-// router.post('/registro',async (req, res) => {
-//   const newUser = await usersManager.createUser(req.body)
-//   if (newUser) {
-//     res.redirect('/views')
-//   } else {
-//     res.redirect('/views/errorRegistro')
-//   }
-// })
 
 //registro con passport
 router.post("/registro",
@@ -53,15 +37,13 @@ router.post(
         failureRedirect: '/views/errorLogin',
         successRedirect: '/products',
         passReqToCallback: true,
-    }))
+        session: true,
+    }),
+    loginController
+);
 
-
-router.get("/logout", async (req, res) => {
-    req.session.destroy(error => {
-        if (error) { console.log(error) }
-        else { res.redirect("/views/login") }
-    })
-})
+router.get("/login/success", loginSuccessController);
+router.get("/logout", logoutController);
 
 //registro con Github
 router.get("/registroGithub", passport.authenticate("github", { scope: ['user:email'] })) // hace peticion a GH
@@ -85,5 +67,15 @@ router.post('/create-new-password/:userId/:token', createNewPasswordController)
 router.put('/premium/:uid', changeRolController)
 
 router.put('/add-cart-to-user', addCartToUserController)
+
+const cpUpload = upload.fields([
+    { name: "profile", maxCount: 1 },
+    { name: "product", maxCount: 3 },
+    { name: "document", maxCount: 3 },
+]);
+router.post("/:uid/documents", cpUpload, uploadFilesController);
+router.get('/', getUsersController)
+// --- Elimina usuarios sin conexión de los últimos 2 días ---
+router.delete('/', deleteUsersController)
 
 export default router
