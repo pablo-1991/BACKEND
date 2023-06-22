@@ -10,9 +10,9 @@ import passport from "passport";
 import config from "./config.js";
 import { errorMiddleware } from './utils/errors/errorsMiddleware.js'
 import { createLog } from './middlewares/winston.middleware.js'
-import swaggerJSDoc from 'swagger-jsdoc'
+import swaggerJSDoc from "swagger-jsdoc";
 import swaggerUi from 'swagger-ui-express'
-import { swaggerSetup } from "./SwaggerSpecs.js";
+import { swaggerSetup } from "./swaggerSpecs.js"
 import cors from "cors";
 
 //IMPORTAR dbConfig
