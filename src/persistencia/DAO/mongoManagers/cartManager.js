@@ -43,7 +43,7 @@ export default class CartManager {
                 }
             }
 
-            let newCartFromUuser = { products: cart };
+            let newCartFromUuser = [{}];
             logger.info("CART CREADO CON ÉXITO!")
             const newCart = await cartsModel.create(newCartFromUuser);
             return { message: "Carrito creado con éxito", cart: newCart, success: true };

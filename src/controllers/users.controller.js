@@ -183,7 +183,6 @@ export const logoutController = async (req, res) => {
             logger.error('Error del controller', error)
             res.json({ success: false, message: "Error en el logout" });
         } else {
-            //res.redirect('api/views/login')
             const time = new Date();
             const response = await logoutService(req.user, time)
             res.json({ success: true, message: `Logout realizado con éxito el ${response}` });

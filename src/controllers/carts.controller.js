@@ -106,7 +106,7 @@ export const editCartController = async (req, res) => {
 export const completeSaleController = async (req, res) => {
     try {
         const buyer = req.user;
-        //console.log('buyer', buyer)
+        console.log('buyer', buyer)
         const cid = req.params.cid;
         const resultCart = await completeSaleService(cid, buyer.full_name);
         res.json({ message: resultCart });

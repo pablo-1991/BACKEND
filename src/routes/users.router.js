@@ -25,17 +25,26 @@ const usersMan = new UsersManager()
 //registro con passport
 router.post("/registro",
     passport.authenticate("registro", {
-        failureRedirect: '/views/errorRegistro',
-        successRedirect: '/products',
+        failureRedirect: "/users/registro/error",
+        successRedirect: "/users/registro/success",
         passReqToCallback: true,
-    }))
+    })
+);
+
+router.get("/registro/success", (req, res) => {
+    res.json({ success: true, message: "Usuario registrado con éxito" });
+});
+
+router.get("/registro/error", (req, res) => {
+    res.json({ success: false, message: "Registro incorrecto" });
+});
 ///////////////////////
 
 router.post(
     '/login',
     passport.authenticate('login', {
-        failureRedirect: '/views/errorLogin',
-        successRedirect: '/products',
+        failureRedirect: "/users/login/error",
+        successRedirect: '/users/login/success',
         passReqToCallback: true,
         session: true,
     }),
@@ -44,13 +53,16 @@ router.post(
 
 router.get("/login/success", loginSuccessController);
 router.get("/logout", logoutController);
+router.get("/login/error", async (req, res) => {
+    res.json({ existUser: false, message: "Usuario o contraseña incorrectos" });
+});
 
 //registro con Github
 router.get("/registroGithub", passport.authenticate("github", { scope: ['user:email'] })) // hace peticion a GH
 
 router.get("/github", passport.authenticate("github"), (req, res) => {
     req.session.email = req.user.email
-    res.redirect("/products")
+    res.redirect("/users/login/success")
 }) //GH devuelve la respuesta
 
 router.get('/current', getUsersDataController)// obtiene datos del usuario
