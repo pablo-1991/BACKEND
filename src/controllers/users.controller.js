@@ -1,7 +1,4 @@
 import {
-    createUserService,
-    loginUserService,
-    getUsersDataService,
     forgotPasswordService,
     createNewPasswordServices,
     changeRolServices,
@@ -10,7 +7,8 @@ import {
     uploadFilesService,
     logoutService,
     getUsersService,
-    deleteUsersService
+    deleteUsersService,
+    changeRolByAdminService
 } from "../services/users.services.js";
 import { generateToken } from "../utils.js";
 import logger from "../utils/winston.js";
@@ -146,7 +144,7 @@ export const loginSuccessController = async (req, res) => {
     try {
         //----- Autenticación de usuarios ---
         const token = generateToken(req.user);
-        logger.info("token generado con éxito", token); 
+        logger.info("token generado con éxito", token);
         console.log("token generado con éxito", token);
 
         res
@@ -166,11 +164,11 @@ export const loginSuccessController = async (req, res) => {
 export const loginController = async (req, res) => {
 
     try {
-        console.log("aqui", req.user); 
+        console.log("aqui", req.user);
         res
             .json({ responseTime: response })
             .cookie("cookie-prueba", "PABLO")
-            .redirect("/users/login/success", req.user) 
+            .redirect("/users/login/success", req.user)
 
     } catch (error) {
         logger.error('Error del controller', error)
@@ -198,3 +196,15 @@ export const deleteUsersController = async (req, res) => {
         logger.error('Error del controller', error)
     }
 }
+
+export const changeRolByAdminController = async (req, res) => {
+    const email = req.body.email;
+    const newRol = req.body.newRol;
+
+    try {
+        const response = await changeRolByAdminService(email, newRol);
+        res.json({ message: response });
+    } catch (error) {
+        logger.error("Error del controller", error);
+    }
+};

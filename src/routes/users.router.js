@@ -14,7 +14,8 @@ import {
     loginController,
     logoutController,
     getUsersController,
-    deleteUsersController
+    deleteUsersController,
+    changeRolByAdminController
 } from '../controllers/users.controller.js'
 
 
@@ -47,15 +48,17 @@ router.post(
         successRedirect: '/users/login/success',
         passReqToCallback: true,
         session: true,
+        
     }),
     loginController
 );
 
 router.get("/login/success", loginSuccessController);
-router.get("/logout", logoutController);
 router.get("/login/error", async (req, res) => {
     res.json({ existUser: false, message: "Usuario o contraseña incorrectos" });
 });
+
+router.get("/logout", logoutController);
 
 //registro con Github
 router.get("/registroGithub", passport.authenticate("github", { scope: ['user:email'] })) // hace peticion a GH
@@ -87,7 +90,10 @@ const cpUpload = upload.fields([
 ]);
 router.post("/:uid/documents", cpUpload, uploadFilesController);
 router.get('/', getUsersController)
-// --- Elimina usuarios sin conexión de los últimos 2 días ---
+
+// Elimina usuarios sin conexión de las ultimas 48hs ---
 router.delete('/', deleteUsersController)
+// Cambia el rol de un usuario ---
+router.put("/change-rol", changeRolByAdminController);
 
 export default router

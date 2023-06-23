@@ -63,7 +63,7 @@ export default class ProductManager {
             };
 
             logger.info("PRODUCTOS ENCONTRADOS!")
-            return { message: "Productos encontrados", products: products };
+            return { message: "Productos encontrados", products: products, totalPages: response.totalPages };
         } catch (error) {
             logger.error("Error desde el manager", error);
             return error;
@@ -187,7 +187,7 @@ export default class ProductManager {
                 from: "pablodpalumbo@gmail.com",
                 to: `${owner.email}`,
                 subject: "Eliminación de producto",
-                text: `El producto eliminado es ${deletedProduct[0].title}`};
+                text: `El producto eliminado es ${deletedProduct.title}`};
 
             transporter.sendMail(mailOptions, (err, response) => {
                 if (err) {
@@ -286,7 +286,6 @@ export default class ProductManager {
                 });
 
                 products.push(product);
-                //product.save();
             }
             console.log(products)
             logger.info("Productos falsos creados con éxito");

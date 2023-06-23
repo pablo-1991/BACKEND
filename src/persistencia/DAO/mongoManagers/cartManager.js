@@ -390,7 +390,7 @@ export default class CartManager {
             for (let index = 0; index < iterations; index++) {
                 el = cart.products[index];
                 product = await productsModel.findOne({ _id: el.id });
-                    if (el.quantity <= product.stock) {
+                if (el.quantity <= product.stock) {
                     //modifica el stock de productos
                     product.stock = product.stock - el.quantity;
                     //para calcular total
@@ -440,7 +440,7 @@ export default class CartManager {
             return error;
         }
     }
-    
+
     async eraseProductFromCart(cid, pid) {
         try {
             if (cid.length != 24 || pid.length != 24) {

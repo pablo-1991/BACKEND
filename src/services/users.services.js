@@ -10,7 +10,8 @@ import {
     login,
     logout,
     getUsers,
-    deleteUsers
+    deleteUsers,
+    changeRolByAdmin
 } from '../persistencia/users.persistence.js'
 
 import UsersRespDTO from '../persistencia/DTO/usersResp.dto.js'
@@ -79,7 +80,10 @@ export async function deleteUsersService() {
     const users = await deleteUsers()
     return users
 }
-
+export async function changeRolByAdminService(email, newRol) {
+    const response = await changeRolByAdmin(email, newRol);
+    return response;
+}
 export async function logoutService(user, time) {
     const response = await logout(user, time)
     return response

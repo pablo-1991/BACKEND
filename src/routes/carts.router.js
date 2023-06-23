@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { jwtValidation } from "../middlewares/jwt.middleware.js";
+import { verificarUsuarioClient } from "../middlewares/auth.js";
 import {
     addCartController,
     editCartController,
@@ -19,7 +19,7 @@ const router = Router();
 router.get("/", getCartsController)
 router.post("/", addCartController)
 router.get("/:cid", getCartByIdController)
-router.post("/:cid/product/:pid", addProductToCartController)
+router.post("/:cid/product/:pid",verificarUsuarioClient , addProductToCartController)
 router.delete("/:cid/product/:pid", deleteProductFromCartController)
 router.delete("/:cid", emptyCartController)
 router.put("/:cid/product/:pid/:qty", editProductQtyController)

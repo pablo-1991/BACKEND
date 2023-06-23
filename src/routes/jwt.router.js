@@ -1,8 +1,8 @@
-import passport from "passport"
 import { Router } from "express";
 import { generateToken } from "../utils.js";
 import UsersManager from '../persistencia/DAO/mongoManagers/usersManager.js'
 import { jwtValidation } from "../middlewares/jwt.middleware.js";
+import logger from "../utils/winston.js";
 
 const router = Router()
 
@@ -15,7 +15,7 @@ router.post('/login', async (req, res) => {
     const user = await userManager.loginUser(req.body)
     if (user) {
         const token = generateToken(user)
-        console.log("TOKEN GENERADO!");
+        logger.info("token generado con éxito");
         return res.cookie("token", token, { httpOnly: true }).json({ token })
     }
     res.json({ message: "El usuario no existe..." })
@@ -23,6 +23,7 @@ router.post('/login', async (req, res) => {
 
 // ******* validar token *******
 router.get("/login", jwtValidation, (req, res) => {
+    logger.info("Token validado");
     res.send("TOKEN VALIDADO!")
 })
 
@@ -32,9 +33,8 @@ router.get('/current', (req, res) => {
     let user = req.cookies.user.user
     if (token) {
         res.json({ tokenFromCookie: token, userFromCookie: user })
-        console.log(req.cookies)
     } else {
-        console.log("ERROR! SIN TOKEN")
+        logger.error("ERROR! SIN TOKEN")
     }
 })
 

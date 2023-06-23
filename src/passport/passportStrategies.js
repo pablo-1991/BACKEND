@@ -43,7 +43,7 @@ passport.use(
                     ...userFromDto,
                     password: hashNewPassword,
                     role: userRole,
-                    lastConnection: "0"
+                    lastConnection: "0" //borra usuarios registrados y no se conectaron
                 };
 
                 const newuserBD = await userModel.create(newUser);
@@ -70,6 +70,7 @@ passport.use(
                 if (user) {
                     const isPassword = await comparePasswords(password, user.password);
                     if (isPassword) {
+                        logger.info("LOGIN REALIZADO CON EXITO!");
                         req.user = user; 
                         req.session.user = user;
                         req.session.save()
@@ -77,11 +78,11 @@ passport.use(
                         const response = await loginService(req.user, time)
                         return done(null, response);
                     } else {
-                        console.log("contraseñas no coinciden");
+                        logger.error("contraseñas no coinciden");
                         return done(null, false);
                     }
                 } else {
-                    console.log("el usuario no existe");
+                    logger.error("el usuario no existe");
                     return done(null, false); 
                 }
             } catch (error) {
